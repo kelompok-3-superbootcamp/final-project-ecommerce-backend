@@ -6,26 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('histories', function (Blueprint $table) {
-            $table->id();
-            $table->timestamp('transaction_date');
-            $table->string('payment_method');
-            $table->integer('total_price');
-            $table->foreignId('user_id')->constrained('users');
-            $table->timestamps();
-        });
-    }
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
+    Schema::create('histories', function (Blueprint $table) {
+      $table->id();
+      $table->timestamp('transaction_date');
+      $table->string('payment_method');
+      $table->integer('total_price');
+      $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+      $table->timestamps();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('histories');
-    }
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::dropIfExists('histories');
+  }
 };
