@@ -111,7 +111,7 @@ class TypeController extends Controller
    *         @OA\JsonContent(
    *             type="object",
    *             @OA\Property(property="name", type="string"),
-   *             @OA\Property(property="comment", type="string"),
+   *             @OA\Property(property="description", type="string"),
    *         )
    *     ),
    *     @OA\Response(
@@ -122,8 +122,8 @@ class TypeController extends Controller
    *           @OA\Property(property="message", type="object",
    *               @OA\Property(property="name", type="array",
    *                 @OA\Items(type="string", example="The name field is required")),
-   *               @OA\Property(property="comment", type="array",
-   *                 @OA\Items(type="string", example="The comment field is required")),
+   *               @OA\Property(property="description", type="array",
+   *                 @OA\Items(type="string", example="The description field is required")),
    *           ),
    *        ),
    *     ),
@@ -151,9 +151,9 @@ class TypeController extends Controller
    */
   public function store(Request $request)
   {
-    $validator = Validator::make($request->only(['name', 'comment']), [
+    $validator = Validator::make($request->only(['name', 'description']), [
       'name' => 'required',
-      'comment' => 'required',
+      'description' => 'required',
     ]);
 
     if ($validator->fails()) {
@@ -194,7 +194,7 @@ class TypeController extends Controller
    *         @OA\JsonContent(
    *             type="object",
    *             @OA\Property(property="name", type="string"),
-   *             @OA\Property(property="comment", type="string"),
+   *             @OA\Property(property="description", type="string"),
    *         )
    *     ),
    *     @OA\Response(
@@ -205,8 +205,8 @@ class TypeController extends Controller
    *           @OA\Property(property="message", type="object",
    *               @OA\Property(property="name", type="array",
    *                 @OA\Items(type="string", example="The name field is required")),
-   *               @OA\Property(property="comment", type="array",
-   *                 @OA\Items(type="string", example="The comment field is required")),
+   *               @OA\Property(property="description", type="array",
+   *                 @OA\Items(type="string", example="The description field is required")),
    *           ),
    *        ),
    *     ),
@@ -234,9 +234,9 @@ class TypeController extends Controller
    */
   public function update(Type $type, Request $request)
   {
-    $validator = Validator::make($request->only(['name', 'comment']), [
+    $validator = Validator::make($request->only(['name', 'description']), [
       'name' => 'sometimes|required',
-      'comment' => 'sometimes|required',
+      'description' => 'sometimes|required',
     ]);
 
     if ($validator->fails()) {
