@@ -6,27 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('vouchers', function (Blueprint $table) {
-            $table->id();
-            $table->string('voucher_code');
-            $table->string('discount_value');
-            $table->enum('discount_type', ['percentage', 'nominal']);
-            $table->integer('buy_minimum');
-            $table->timestamp('expired_at');
-            $table->timestamps();
-        });
-    }
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
+    Schema::create('vouchers', function (Blueprint $table) {
+      $table->id();
+      $table->string('voucher_code');
+      $table->string('discount_value');
+      $table->enum('discount_type', ['percentage', 'nominal']);
+      $table->integer('quota');
+      $table->timestamp('expired_at');
+      $table->timestamps();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('vouchers');
-    }
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::dropIfExists('vouchers');
+  }
 };

@@ -11,12 +11,10 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('histories', function (Blueprint $table) {
+    Schema::create('types', function (Blueprint $table) {
       $table->id();
-      $table->timestamp('transaction_date');
-      $table->string('payment_method');
-      $table->integer('total_price');
-      $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+      $table->string('name');
+      $table->string('comment');
       $table->timestamps();
     });
   }
@@ -26,6 +24,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('histories');
+    Schema::dropIfExists('types');
   }
 };
