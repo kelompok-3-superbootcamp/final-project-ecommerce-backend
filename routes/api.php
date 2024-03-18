@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\TypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,12 +30,12 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
   Route::post('/change-password', 'changePassword');
 });
 
-Route::controller(CategoryController::class)->prefix('categories')->group(function () {
+Route::controller(TypeController::class)->prefix('types')->group(function () {
   Route::get('/', 'index');
-  Route::get('/{category}', 'show');
+  Route::get('/{type}', 'show');
   Route::post('/', 'store');
-  Route::put('/{category}', 'update');
-  Route::delete('/{category}', 'destroy');
+  Route::put('/{type}', 'update');
+  Route::delete('/{type}', 'destroy');
 });
 
 Route::controller(BrandController::class)->prefix('brands')->group(function () {
