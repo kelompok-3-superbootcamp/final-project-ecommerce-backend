@@ -19,11 +19,41 @@ class AuthController extends Controller
     $this->middleware('auth:api')->except(['login', 'register']);
   }
 
+  /**
+   * Registering a user.
+   *
+   * @OA\Post(
+   *     path="/api/auth/register",
+   *     tags={"auth"},
+   *     operationId="register",
+   *     @OA\Response(
+   *         response=401,
+   *         description="Invalid input",
+   *         @OA\JsonContent
+   *     ),
+   *     @OA\Response(
+   *         response=201,
+   *         description="Register account Successfully",
+   *         @OA\JsonContent
+   *     ),
+   *  @OA\RequestBody(
+   *         required=true,
+   *         @OA\JsonContent(
+   *             type="object",
+   *             @OA\Property(property="name", type="string", example="Adi Cahya S"),
+   *             @OA\Property(property="email", type="string", example="adics@gmail.com"),
+   *             @OA\Property(property="phone_number", type="string", example="62812345678910"),
+   *             @OA\Property(property="password", type="string", example="pw"),
+   *         ),
+   *     ),
+   * )
+   */
   public function register(Request $request)
   {
     $validator = Validator::make($request->only(['name', 'email', 'password']), [
       'name' => 'required|max:255',
       'email' => 'required|email|unique:users,email',
+      'phone_number' => 'required|numeric|digits:13',
       'password' => 'required|max:255',
     ]);
 
@@ -36,6 +66,8 @@ class AuthController extends Controller
       $createdUser = User::create([
         'name' => $data['name'],
         'email' => $data['email'],
+        'phone_number' => $data['phone_number'],
+        'role' => 'user',
         'password' => bcrypt($data['password']),
       ]);
 
@@ -45,6 +77,33 @@ class AuthController extends Controller
     }
   }
 
+  /**
+   * Login.
+   *
+   * @OA\Post(
+   *     path="/api/auth/login",
+   *     tags={"auth"},
+   *     operationId="login",
+   *     @OA\Response(
+   *         response=401,
+   *         description="Invalid input",
+   *         @OA\JsonContent
+   *     ),
+   *     @OA\Response(
+   *         response=200,
+   *         description="Login Successfully",
+   *         @OA\JsonContent
+   *     ),
+   *  @OA\RequestBody(
+   *         required=true,
+   *         @OA\JsonContent(
+   *             type="object",
+   *             @OA\Property(property="email", type="string", example="adics@gmail.com"),
+   *             @OA\Property(property="password", type="string", example="pw"),
+   *         ),
+   *     ),
+   * )
+   */
   public function login(Request $request)
   {
     $validator = Validator::make($request->only(['email', 'password']), [
@@ -67,11 +126,51 @@ class AuthController extends Controller
     return AuthHelper::respondWithToken($token, $user);
   }
 
+  /**
+   * Get Current user.
+   *
+   * @OA\Post(
+   *     path="/api/auth/me",
+   *     tags={"auth"},
+   *     operationId="me",
+   *     security={{ "bearerAuth":{} }},
+   *     @OA\Response(
+   *         response=401,
+   *         description="Unauthorized",
+   *         @OA\JsonContent
+   *     ),
+   *     @OA\Response(
+   *         response=200,
+   *         description="Show current user data",
+   *         @OA\JsonContent
+   *     ),
+   * )
+   */
   public function me()
   {
     return ApiHelper::sendResponse(data: auth()->user());
   }
 
+  /**
+   * Logged Out Current user.
+   *
+   * @OA\Post(
+   *     path="/api/auth/logout",
+   *     tags={"auth"},
+   *     operationId="logout",
+   *     security={{ "bearerAuth":{} }},
+   *     @OA\Response(
+   *         response=401,
+   *         description="Unauthorized",
+   *         @OA\JsonContent
+   *     ),
+   *     @OA\Response(
+   *         response=200,
+   *         description="Logout",
+   *         @OA\JsonContent
+   *     ),
+   * )
+   */
   public function logout()
   {
     auth()->logout();
@@ -79,6 +178,35 @@ class AuthController extends Controller
     return ApiHelper::sendResponse(message: 'Logout success');
   }
 
+  /**
+   * Change Password.
+   *
+   * @OA\Post(
+   *     path="/api/auth/change-password",
+   *     tags={"auth"},
+   *     operationId="changePassword",
+   *     security={{ "bearerAuth":{} }},
+   *     @OA\Response(
+   *         response=401,
+   *         description="Invalid input",
+   *         @OA\JsonContent
+   *     ),
+   *     @OA\Response(
+   *         response=201,
+   *         description="Change Password account Successfully",
+   *         @OA\JsonContent
+   *     ),
+   *  @OA\RequestBody(
+   *         required=true,
+   *         @OA\JsonContent(
+   *             type="object",
+   *             @OA\Property(property="old_password", type="string", example="old_pw"),
+   *             @OA\Property(property="new_password", type="string", example="new_pw"),
+   *             @OA\Property(property="password_confirmation", type="string", example="new_pw"),
+   *         ),
+   *     ),
+   * )
+   */
   public function changePassword(Request $request)
   {
     $validator = Validator::make($request->only(['old_password', 'new_password', 'password_confirmation']), [
