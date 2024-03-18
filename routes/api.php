@@ -3,12 +3,8 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CarController;
-<<<<<<< HEAD
-=======
 use App\Http\Controllers\Api\OrderController;
->>>>>>> 2b0b788ae221c6908500cbcdc32157367e172195
 use App\Http\Controllers\Api\TypeController;
-use App\Models\Car;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
