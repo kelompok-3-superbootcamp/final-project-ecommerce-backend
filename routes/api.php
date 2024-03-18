@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,4 +35,12 @@ Route::controller(CategoryController::class)->prefix('categories')->group(functi
   Route::post('/', 'store');
   Route::put('/{category}', 'update');
   Route::delete('/{category}', 'destroy');
+});
+
+Route::controller(BrandController::class)->prefix('brands')->group(function () {
+  Route::get('/', 'index');
+  Route::get('/{brand}', 'show');
+  Route::post('/', 'store');
+  Route::put('/{brand}', 'update');
+  Route::delete('/{brand}', 'destroy');
 });
