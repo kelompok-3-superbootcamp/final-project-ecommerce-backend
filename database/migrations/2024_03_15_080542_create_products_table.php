@@ -16,9 +16,13 @@ return new class extends Migration
       $table->string('name');
       $table->tinyText('description');
       $table->integer('price');
+      $table->string('transmission');
+      $table->string('color');
       $table->integer('stock');
       $table->string('image');
       $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
+      $table->foreignId('brand_id')->constrained('brands')->cascadeOnDelete();
+      $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
       $table->timestamps();
     });
   }
