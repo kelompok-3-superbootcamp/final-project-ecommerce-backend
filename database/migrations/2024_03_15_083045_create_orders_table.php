@@ -13,7 +13,7 @@ return new class extends Migration
   {
     Schema::create('orders', function (Blueprint $table) {
       $table->id();
-      $table->timestamp('date');
+      $table->dateTime('date');
       $table->string('payment_method');
       $table->string('payment_status');
       $table->string('payment_url');
