@@ -4,29 +4,30 @@ namespace App\Http\Controllers\Api;
 
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
-use App\Models\Type;
+use App\Models\Car;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class TypeController extends Controller
+class CarController extends Controller
 {
+
   public function __construct()
   {
-    $this->middleware('auth')->except(['index']);
+    $this->middleware('auth')->except(['index', 'show']);
   }
 
   /**
-   * Get types of a car
+   * Get all cars
    *
    * @OA\Get(
-   *     path="/api/types",
-   *     tags={"types"},
-   *     description="Get types car",
-   *     operationId="index_types",
+   *     path="/api/cars",
+   *     tags={"cars"},
+   *     description="Get all cars",
+   *     operationId="index_cars",
    *     @OA\Response(
    *         response="200",
-   *         description="Successful get data types",
+   *         description="Successful get data cars",
    *         @OA\JsonContent(
    *             @OA\Property(
    *                 property="status",
@@ -48,19 +49,17 @@ class TypeController extends Controller
    */
   public function index()
   {
-    return ApiHelper::sendResponse(data: Type::all());
+    return ApiHelper::sendResponse(data: Car::all());
   }
 
-
   /**
-   * Get type of a car
+   * Get a car
    *
    * @OA\Get(
-   *     path="/api/types/{id}",
-   *     tags={"types"},
-   *     description="Get type car",
-   *     operationId="show_types",
-   *     security={{ "bearerAuth": {} }},
+   *     path="/api/cars/{id}",
+   *     tags={"cars"},
+   *     description="Get a car",
+   *     operationId="show_cars",
    *     @OA\Parameter(
    *         description="Parameter id",
    *         in="path",
@@ -71,7 +70,7 @@ class TypeController extends Controller
    *     ),
    *     @OA\Response(
    *         response="200",
-   *         description="Successful get data type",
+   *         description="Successful get a data of car",
    *         @OA\JsonContent(
    *             @OA\Property(
    *                 property="status",
@@ -91,20 +90,19 @@ class TypeController extends Controller
    *     )
    * )
    */
-  public function show(Type $type)
+  public function show(Car $car)
   {
-    return ApiHelper::sendResponse(data: $type);
+    return ApiHelper::sendResponse(data: $car);
   }
 
-
   /**
-   * Add type of a car
+   * Add a car
    *
    * @OA\Post(
-   *     path="/api/types",
-   *     tags={"types"},
+   *     path="/api/cars",
+   *     tags={"cars"},
    *     description="Add type of a car",
-   *     operationId="store_types",
+   *     operationId="store_cars",
    *     security={{ "bearerAuth": {} }},
    *     @OA\RequestBody(
    *         required=true,
@@ -112,6 +110,16 @@ class TypeController extends Controller
    *             type="object",
    *             @OA\Property(property="name", type="string"),
    *             @OA\Property(property="description", type="string"),
+   *             @OA\Property(property="price", type="integer"),
+   *             @OA\Property(property="transmission", type="string"),
+   *             @OA\Property(property="condition", type="string"),
+   *             @OA\Property(property="year", type="integer"),
+   *             @OA\Property(property="km", type="integer"),
+   *             @OA\Property(property="stock", type="integer"),
+   *             @OA\Property(property="image", type="string"),
+   *             @OA\Property(property="brand_id", type="integer"),
+   *             @OA\Property(property="type_id", type="integer"),
+   *             @OA\Property(property="user_id", type="integer"),
    *         )
    *     ),
    *     @OA\Response(
@@ -129,7 +137,7 @@ class TypeController extends Controller
    *     ),
    *     @OA\Response(
    *         response="200",
-   *         description="Successful add data types",
+   *         description="Successful add data car",
    *         @OA\JsonContent(
    *             @OA\Property(
    *                 property="status",
@@ -151,9 +159,21 @@ class TypeController extends Controller
    */
   public function store(Request $request)
   {
-    $validator = Validator::make($request->only(['name', 'description']), [
+    $validator = Validator::make($request->only([
+      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id', 'user_id',
+    ]), [
       'name' => 'required',
       'description' => 'required',
+      'price' => 'required|integer',
+      'transmission' => 'required',
+      'condition' => 'required',
+      'year' => 'required|integer',
+      'km' => 'required|integer',
+      'stock' => 'required|integer',
+      'image' => 'required',
+      'brand_id' => 'required|integer',
+      'type_id' => 'required|integer',
+      'user_id' => 'required|integer',
     ]);
 
     if ($validator->fails()) {
@@ -162,10 +182,9 @@ class TypeController extends Controller
 
     try {
       $data = $validator->validated();
+      $createdCar = Car::create($data);
 
-      $createdType = Type::create($data);
-
-      return ApiHelper::sendResponse(201, data: $createdType);
+      return ApiHelper::sendResponse(201, data: $createdCar);
     } catch (Exception $e) {
       return ApiHelper::sendResponse(500, $e->getMessage());
     }
@@ -173,13 +192,13 @@ class TypeController extends Controller
 
 
   /**
-   * Edit type of a car
+   * Edit a car
    *
    * @OA\Put(
-   *     path="/api/types/{id}",
-   *     tags={"types"},
-   *     description="Edit type of a car",
-   *     operationId="update_types",
+   *     path="/api/cars/{id}",
+   *     tags={"cars"},
+   *     description="Edit a car",
+   *     operationId="update_cars",
    *     security={{ "bearerAuth": {} }},
    *     @OA\Parameter(
    *         description="Parameter id",
@@ -195,6 +214,16 @@ class TypeController extends Controller
    *             type="object",
    *             @OA\Property(property="name", type="string"),
    *             @OA\Property(property="description", type="string"),
+   *             @OA\Property(property="price", type="integer"),
+   *             @OA\Property(property="transmission", type="string"),
+   *             @OA\Property(property="condition", type="string"),
+   *             @OA\Property(property="year", type="integer"),
+   *             @OA\Property(property="km", type="integer"),
+   *             @OA\Property(property="stock", type="integer"),
+   *             @OA\Property(property="image", type="string"),
+   *             @OA\Property(property="brand_id", type="integer"),
+   *             @OA\Property(property="type_id", type="integer"),
+   *             @OA\Property(property="user_id", type="integer"),
    *         )
    *     ),
    *     @OA\Response(
@@ -212,7 +241,7 @@ class TypeController extends Controller
    *     ),
    *     @OA\Response(
    *         response="200",
-   *         description="Successful add data types",
+   *         description="Successful update car data",
    *         @OA\JsonContent(
    *             @OA\Property(
    *                 property="status",
@@ -232,11 +261,23 @@ class TypeController extends Controller
    *     )
    * )
    */
-  public function update(Type $type, Request $request)
+  public function update(Car $car, Request $request)
   {
-    $validator = Validator::make($request->only(['name', 'description']), [
+    $validator = Validator::make($request->only([
+      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id', 'user_id',
+    ]), [
       'name' => 'sometimes|required',
       'description' => 'sometimes|required',
+      'price' => 'sometimes|required|integer',
+      'transmission' => 'sometimes|required',
+      'condition' => 'sometimes|required',
+      'year' => 'sometimes|required|integer',
+      'km' => 'sometimes|required|integer',
+      'stock' => 'sometimes|required|integer',
+      'image' => 'sometimes|required',
+      'brand_id' => 'sometimes|required|integer',
+      'type_id' => 'sometimes|required|integer',
+      'user_id' => 'sometimes|required|integer',
     ]);
 
     if ($validator->fails()) {
@@ -245,10 +286,9 @@ class TypeController extends Controller
 
     try {
       $data = $validator->validated();
+      $updatedCar = $car->update($data);
 
-      $createdType = $type->update($data);
-
-      return ApiHelper::sendResponse(201, data: $createdType);
+      return ApiHelper::sendResponse(201, data: $updatedCar);
     } catch (Exception $e) {
       return ApiHelper::sendResponse(500, $e->getMessage());
     }
@@ -256,13 +296,13 @@ class TypeController extends Controller
 
 
   /**
-   * Delete types of a car
+   * Delete a car
    *
    * @OA\Delete(
-   *     path="/api/types/{id}",
-   *     tags={"types"},
-   *     description="Delete type of a car",
-   *     operationId="destroy_types",
+   *     path="/api/cars/{id}",
+   *     tags={"cars"},
+   *     description="Delete a car",
+   *     operationId="destroy_cars",
    *     security={{ "bearerAuth": {} }},
    *     @OA\Parameter(
    *         description="Parameter id",
@@ -294,10 +334,10 @@ class TypeController extends Controller
    *     )
    * )
    */
-  public function destroy(Type $type)
+  public function destroy(Car $car)
   {
     try {
-      $type->delete();
+      $car->delete();
 
       return ApiHelper::sendResponse(200);
     } catch (Exception $e) {

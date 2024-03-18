@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('types', function (Blueprint $table) {
       $table->id();
       $table->string('name');
-      $table->string('comment');
+      $table->string('description');
       $table->timestamps();
     });
   }
