@@ -13,7 +13,7 @@ class TypeController extends Controller
 {
   public function __construct()
   {
-    $this->middleware('auth')->except(['index']);
+    $this->middleware('auth')->except(['index', 'show']);
   }
 
   /**
@@ -60,7 +60,6 @@ class TypeController extends Controller
    *     tags={"types"},
    *     description="Get type car",
    *     operationId="show_types",
-   *     security={{ "bearerAuth": {} }},
    *     @OA\Parameter(
    *         description="Parameter id",
    *         in="path",
@@ -129,7 +128,7 @@ class TypeController extends Controller
    *     ),
    *     @OA\Response(
    *         response="200",
-   *         description="Successful add data types",
+   *         description="Successful add data type",
    *         @OA\JsonContent(
    *             @OA\Property(
    *                 property="status",

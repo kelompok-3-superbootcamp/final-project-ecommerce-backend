@@ -24,7 +24,7 @@ class CarController extends Controller
    *     path="/api/cars",
    *     tags={"cars"},
    *     description="Get all cars",
-   *     operationId="index_cars",
+   *     operationId="getCars",
    *     @OA\Response(
    *         response="200",
    *         description="Successful get data cars",
@@ -59,7 +59,7 @@ class CarController extends Controller
    *     path="/api/cars/{id}",
    *     tags={"cars"},
    *     description="Get a car",
-   *     operationId="show_cars",
+   *     operationId="getCarById",
    *     @OA\Parameter(
    *         description="Parameter id",
    *         in="path",
@@ -102,7 +102,7 @@ class CarController extends Controller
    *     path="/api/cars",
    *     tags={"cars"},
    *     description="Add type of a car",
-   *     operationId="store_cars",
+   *     operationId="createCar",
    *     security={{ "bearerAuth": {} }},
    *     @OA\RequestBody(
    *         required=true,
@@ -119,7 +119,6 @@ class CarController extends Controller
    *             @OA\Property(property="image", type="string"),
    *             @OA\Property(property="brand_id", type="integer"),
    *             @OA\Property(property="type_id", type="integer"),
-   *             @OA\Property(property="user_id", type="integer"),
    *         )
    *     ),
    *     @OA\Response(
@@ -132,6 +131,24 @@ class CarController extends Controller
    *                 @OA\Items(type="string", example="The name field is required")),
    *               @OA\Property(property="description", type="array",
    *                 @OA\Items(type="string", example="The description field is required")),
+   *               @OA\Property(property="price", type="array",
+   *                 @OA\Items(type="string", example="The price field is required")),
+   *               @OA\Property(property="transmission", type="array",
+   *                 @OA\Items(type="string", example="The transmission field is required")),
+   *               @OA\Property(property="condition", type="array",
+   *                 @OA\Items(type="string", example="The condition field is required")),
+   *               @OA\Property(property="year", type="array",
+   *                 @OA\Items(type="string", example="The year field is required")),
+   *               @OA\Property(property="km", type="array",
+   *                 @OA\Items(type="string", example="The km field is required")),
+   *               @OA\Property(property="stock", type="array",
+   *                 @OA\Items(type="string", example="The stock field is required")),
+   *               @OA\Property(property="image", type="array",
+   *                 @OA\Items(type="string", example="The image field is required")),
+   *               @OA\Property(property="brand_id", type="array",
+   *                 @OA\Items(type="string", example="The brand_id field is required")),
+   *               @OA\Property(property="type_id", type="array",
+   *                 @OA\Items(type="string", example="The type_id field is required")),
    *           ),
    *        ),
    *     ),
@@ -160,7 +177,7 @@ class CarController extends Controller
   public function store(Request $request)
   {
     $validator = Validator::make($request->only([
-      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id', 'user_id',
+      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id',
     ]), [
       'name' => 'required',
       'description' => 'required',
@@ -173,7 +190,6 @@ class CarController extends Controller
       'image' => 'required',
       'brand_id' => 'required|integer',
       'type_id' => 'required|integer',
-      'user_id' => 'required|integer',
     ]);
 
     if ($validator->fails()) {
@@ -182,6 +198,7 @@ class CarController extends Controller
 
     try {
       $data = $validator->validated();
+      $data['user_id'] = auth()->user()->id;
       $createdCar = Car::create($data);
 
       return ApiHelper::sendResponse(201, data: $createdCar);
@@ -223,7 +240,6 @@ class CarController extends Controller
    *             @OA\Property(property="image", type="string"),
    *             @OA\Property(property="brand_id", type="integer"),
    *             @OA\Property(property="type_id", type="integer"),
-   *             @OA\Property(property="user_id", type="integer"),
    *         )
    *     ),
    *     @OA\Response(
@@ -236,6 +252,24 @@ class CarController extends Controller
    *                 @OA\Items(type="string", example="The name field is required")),
    *               @OA\Property(property="description", type="array",
    *                 @OA\Items(type="string", example="The description field is required")),
+   *               @OA\Property(property="price", type="array",
+   *                 @OA\Items(type="string", example="The price field is required")),
+   *               @OA\Property(property="transmission", type="array",
+   *                 @OA\Items(type="string", example="The transmission field is required")),
+   *               @OA\Property(property="condition", type="array",
+   *                 @OA\Items(type="string", example="The condition field is required")),
+   *               @OA\Property(property="year", type="array",
+   *                 @OA\Items(type="string", example="The year field is required")),
+   *               @OA\Property(property="km", type="array",
+   *                 @OA\Items(type="string", example="The km field is required")),
+   *               @OA\Property(property="stock", type="array",
+   *                 @OA\Items(type="string", example="The stock field is required")),
+   *               @OA\Property(property="image", type="array",
+   *                 @OA\Items(type="string", example="The image field is required")),
+   *               @OA\Property(property="brand_id", type="array",
+   *                 @OA\Items(type="string", example="The brand_id field is required")),
+   *               @OA\Property(property="type_id", type="array",
+   *                 @OA\Items(type="string", example="The type_id field is required")),
    *           ),
    *        ),
    *     ),
@@ -264,7 +298,7 @@ class CarController extends Controller
   public function update(Car $car, Request $request)
   {
     $validator = Validator::make($request->only([
-      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id', 'user_id',
+      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id',
     ]), [
       'name' => 'sometimes|required',
       'description' => 'sometimes|required',
@@ -277,7 +311,6 @@ class CarController extends Controller
       'image' => 'sometimes|required',
       'brand_id' => 'sometimes|required|integer',
       'type_id' => 'sometimes|required|integer',
-      'user_id' => 'sometimes|required|integer',
     ]);
 
     if ($validator->fails()) {
@@ -286,6 +319,7 @@ class CarController extends Controller
 
     try {
       $data = $validator->validated();
+      $data['user_id'] = auth()->user()->id;
       $updatedCar = $car->update($data);
 
       return ApiHelper::sendResponse(201, data: $updatedCar);
