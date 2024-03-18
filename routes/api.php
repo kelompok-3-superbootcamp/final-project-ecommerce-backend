@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BrandController;
+use App\Http\Controllers\Api\CarController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\TypeController;
 use Illuminate\Http\Request;
@@ -44,6 +45,14 @@ Route::controller(BrandController::class)->prefix('brands')->group(function () {
   Route::post('/', 'store');
   Route::put('/{brand}', 'update');
   Route::delete('/{brand}', 'destroy');
+});
+
+Route::controller(CarController::class)->prefix('cars')->group(function () {
+  Route::get('/', 'index');
+  Route::get('/{car}', 'show');
+  Route::post('/', 'store');
+  Route::put('/{car}', 'update');
+  Route::delete('/{car}', 'destroy');
 });
 
 Route::controller(OrderController::class)->prefix('orders')->group(function () {
