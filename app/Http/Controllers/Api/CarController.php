@@ -119,7 +119,6 @@ class CarController extends Controller
    *             @OA\Property(property="image", type="string"),
    *             @OA\Property(property="brand_id", type="integer"),
    *             @OA\Property(property="type_id", type="integer"),
-   *             @OA\Property(property="user_id", type="integer"),
    *         )
    *     ),
    *     @OA\Response(
@@ -160,7 +159,7 @@ class CarController extends Controller
   public function store(Request $request)
   {
     $validator = Validator::make($request->only([
-      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id', 'user_id',
+      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id',
     ]), [
       'name' => 'required',
       'description' => 'required',
@@ -173,7 +172,6 @@ class CarController extends Controller
       'image' => 'required',
       'brand_id' => 'required|integer',
       'type_id' => 'required|integer',
-      'user_id' => 'required|integer',
     ]);
 
     if ($validator->fails()) {
@@ -182,6 +180,8 @@ class CarController extends Controller
 
     try {
       $data = $validator->validated();
+      $data['user_id'] = auth()->user()->id;
+
       $createdCar = Car::create($data);
 
       return ApiHelper::sendResponse(201, data: $createdCar);
@@ -223,7 +223,6 @@ class CarController extends Controller
    *             @OA\Property(property="image", type="string"),
    *             @OA\Property(property="brand_id", type="integer"),
    *             @OA\Property(property="type_id", type="integer"),
-   *             @OA\Property(property="user_id", type="integer"),
    *         )
    *     ),
    *     @OA\Response(
@@ -264,7 +263,7 @@ class CarController extends Controller
   public function update(Car $car, Request $request)
   {
     $validator = Validator::make($request->only([
-      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id', 'user_id',
+      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id',
     ]), [
       'name' => 'sometimes|required',
       'description' => 'sometimes|required',
@@ -277,7 +276,6 @@ class CarController extends Controller
       'image' => 'sometimes|required',
       'brand_id' => 'sometimes|required|integer',
       'type_id' => 'sometimes|required|integer',
-      'user_id' => 'sometimes|required|integer',
     ]);
 
     if ($validator->fails()) {
@@ -286,6 +284,8 @@ class CarController extends Controller
 
     try {
       $data = $validator->validated();
+      $data['user_id'] = auth()->user()->id;
+
       $updatedCar = $car->update($data);
 
       return ApiHelper::sendResponse(201, data: $updatedCar);

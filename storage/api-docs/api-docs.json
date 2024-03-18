@@ -450,17 +450,17 @@
                 ]
             }
         },
-        "/api/orders": {
+        "/api/cars": {
             "get": {
                 "tags": [
-                    "orders"
+                    "cars"
                 ],
-                "summary": "Get orders",
-                "description": "Get orders",
-                "operationId": "index_orders",
+                "summary": "Get all cars",
+                "description": "Get all cars",
+                "operationId": "index_cars",
                 "responses": {
                     "200": {
-                        "description": "Successful get data orders",
+                        "description": "Successful get data cars",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -486,33 +486,48 @@
             },
             "post": {
                 "tags": [
-                    "orders"
+                    "cars"
                 ],
-                "summary": "Create order",
-                "description": "Create new order",
-                "operationId": "store_orders",
+                "summary": "Add a car",
+                "description": "Add type of a car",
+                "operationId": "store_cars",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "date": {
+                                    "name": {
                                         "type": "string"
                                     },
-                                    "payment_method": {
+                                    "description": {
                                         "type": "string"
                                     },
-                                    "payment_status": {
-                                        "type": "string"
-                                    },
-                                    "payment_url": {
-                                        "type": "string"
-                                    },
-                                    "total_price": {
+                                    "price": {
                                         "type": "integer"
                                     },
-                                    "car_id": {
+                                    "transmission": {
+                                        "type": "string"
+                                    },
+                                    "condition": {
+                                        "type": "string"
+                                    },
+                                    "year": {
+                                        "type": "integer"
+                                    },
+                                    "km": {
+                                        "type": "integer"
+                                    },
+                                    "stock": {
+                                        "type": "integer"
+                                    },
+                                    "image": {
+                                        "type": "string"
+                                    },
+                                    "brand_id": {
+                                        "type": "integer"
+                                    },
+                                    "type_id": {
                                         "type": "integer"
                                     }
                                 },
@@ -523,10 +538,42 @@
                 },
                 "responses": {
                     "400": {
-                        "description": "Validation Error"
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "400"
+                                        },
+                                        "message": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name field is required"
+                                                    }
+                                                },
+                                                "description": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The description field is required"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "200": {
-                        "description": "Successful add data types",
+                        "description": "Successful add data car",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -556,14 +603,14 @@
                 ]
             }
         },
-        "/api/orders/{id}": {
+        "/api/cars/{id}": {
             "get": {
                 "tags": [
-                    "orders"
+                    "cars"
                 ],
-                "summary": "Get order detail",
-                "description": "Get order detail",
-                "operationId": "show_orders",
+                "summary": "Get a car",
+                "description": "Get a car",
+                "operationId": "show_cars",
                 "parameters": [
                     {
                         "name": "id",
@@ -583,7 +630,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful get data order",
+                        "description": "Successful get a data of car",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -605,20 +652,15 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             },
             "put": {
                 "tags": [
-                    "orders"
+                    "cars"
                 ],
-                "summary": "Edit orders",
-                "description": "Edit orders",
-                "operationId": "update_orders",
+                "summary": "Edit a car",
+                "description": "Edit a car",
+                "operationId": "update_cars",
                 "parameters": [
                     {
                         "name": "id",
@@ -642,22 +684,37 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "date": {
+                                    "name": {
                                         "type": "string"
                                     },
-                                    "payment_method": {
+                                    "description": {
                                         "type": "string"
                                     },
-                                    "payment_status": {
-                                        "type": "string"
-                                    },
-                                    "payment_url": {
-                                        "type": "string"
-                                    },
-                                    "total_price": {
+                                    "price": {
                                         "type": "integer"
                                     },
-                                    "car_id": {
+                                    "transmission": {
+                                        "type": "string"
+                                    },
+                                    "condition": {
+                                        "type": "string"
+                                    },
+                                    "year": {
+                                        "type": "integer"
+                                    },
+                                    "km": {
+                                        "type": "integer"
+                                    },
+                                    "stock": {
+                                        "type": "integer"
+                                    },
+                                    "image": {
+                                        "type": "string"
+                                    },
+                                    "brand_id": {
+                                        "type": "integer"
+                                    },
+                                    "type_id": {
                                         "type": "integer"
                                     }
                                 },
@@ -668,10 +725,42 @@
                 },
                 "responses": {
                     "400": {
-                        "description": "Validation Error"
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "400"
+                                        },
+                                        "message": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name field is required"
+                                                    }
+                                                },
+                                                "description": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The description field is required"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "200": {
-                        "description": "Successful add data types",
+                        "description": "Successful update car data",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -702,11 +791,11 @@
             },
             "delete": {
                 "tags": [
-                    "orders"
+                    "cars"
                 ],
-                "summary": "Delete orders",
-                "description": "Delete orders",
-                "operationId": "destroy_orders",
+                "summary": "Delete a car",
+                "description": "Delete a car",
+                "operationId": "destroy_cars",
                 "parameters": [
                     {
                         "name": "id",
@@ -726,7 +815,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful delete data order",
+                        "description": "Successful delete data type",
                         "content": {
                             "application/json": {
                                 "schema": {
