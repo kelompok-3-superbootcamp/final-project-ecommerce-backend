@@ -89,19 +89,3 @@ Route::controller(ReviewController::class)->prefix('reviews')->group(function ()
   Route::put('/{review}', 'update');
   Route::delete('/{review}', 'destroy');
 });
-
-Route::controller(VoucherController::class)->prefix('vouchers')->group(function () {
-  Route::get('/', 'index');
-  Route::get('/{voucher}', 'show');
-  Route::post('/', 'store');
-  Route::put('/{voucher}', 'update');
-  Route::delete('/{voucher}', 'destroy');
-});
-
-Route::controller(WishlistController::class)->prefix('wishlists')->group(function () {
-  Route::get('/', 'index');
-  Route::get('/{wishlist}', 'show');
-  Route::post('/', 'store');
-  Route::put('/{wishlist}', 'update');
-  Route::delete('/{wishlist}', 'destroy');
-});
