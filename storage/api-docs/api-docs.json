@@ -457,7 +457,7 @@
                 ],
                 "summary": "Get all cars",
                 "description": "Get all cars",
-                "operationId": "index_cars",
+                "operationId": "getCars",
                 "responses": {
                     "200": {
                         "description": "Successful get data cars",
@@ -490,7 +490,7 @@
                 ],
                 "summary": "Add a car",
                 "description": "Add type of a car",
-                "operationId": "store_cars",
+                "operationId": "createCar",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -562,6 +562,69 @@
                                                         "type": "string",
                                                         "example": "The description field is required"
                                                     }
+                                                },
+                                                "price": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The price field is required"
+                                                    }
+                                                },
+                                                "transmission": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The transmission field is required"
+                                                    }
+                                                },
+                                                "condition": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The condition field is required"
+                                                    }
+                                                },
+                                                "year": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The year field is required"
+                                                    }
+                                                },
+                                                "km": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The km field is required"
+                                                    }
+                                                },
+                                                "stock": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The stock field is required"
+                                                    }
+                                                },
+                                                "image": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The image field is required"
+                                                    }
+                                                },
+                                                "brand_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The brand_id field is required"
+                                                    }
+                                                },
+                                                "type_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The type_id field is required"
+                                                    }
                                                 }
                                             },
                                             "type": "object"
@@ -610,7 +673,7 @@
                 ],
                 "summary": "Get a car",
                 "description": "Get a car",
-                "operationId": "show_cars",
+                "operationId": "getCarById",
                 "parameters": [
                     {
                         "name": "id",
@@ -748,6 +811,69 @@
                                                     "items": {
                                                         "type": "string",
                                                         "example": "The description field is required"
+                                                    }
+                                                },
+                                                "price": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The price field is required"
+                                                    }
+                                                },
+                                                "transmission": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The transmission field is required"
+                                                    }
+                                                },
+                                                "condition": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The condition field is required"
+                                                    }
+                                                },
+                                                "year": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The year field is required"
+                                                    }
+                                                },
+                                                "km": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The km field is required"
+                                                    }
+                                                },
+                                                "stock": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The stock field is required"
+                                                    }
+                                                },
+                                                "image": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The image field is required"
+                                                    }
+                                                },
+                                                "brand_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The brand_id field is required"
+                                                    }
+                                                },
+                                                "type_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The type_id field is required"
                                                     }
                                                 }
                                             },
@@ -1594,7 +1720,7 @@
                         }
                     },
                     "200": {
-                        "description": "Successful add data types",
+                        "description": "Successful add data type",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1673,12 +1799,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             },
             "put": {
                 "tags": [
