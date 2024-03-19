@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Enum\DiscountType;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
-use App\Models\Type;
 use App\Models\Voucher;
 use App\Rules\DiscountValueValidation;
 use Exception;

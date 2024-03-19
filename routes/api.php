@@ -80,3 +80,11 @@ Route::controller(WishlistController::class)->prefix('wishlists')->group(functio
   Route::put('/{wishlist}', 'update');
   Route::delete('/{wishlist}', 'destroy');
 });
+
+Route::controller(VoucherController::class)->prefix('vouchers')->group(function () {
+  Route::get('/', 'index');
+  Route::get('/{voucher}', 'show');
+  Route::post('/', 'store');
+  Route::put('/{voucher}', 'update');
+  Route::delete('/{voucher}', 'destroy');
+});
