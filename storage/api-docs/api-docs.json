@@ -1497,6 +1497,7 @@
                 ]
             }
         },
+<<<<<<< HEAD
         "/api/vouchers": {
             "get": {
                 "tags": [
@@ -1508,6 +1509,19 @@
                 "responses": {
                     "200": {
                         "description": "Successful get data vouchers",
+=======
+        "/api/wishlists": {
+            "get": {
+                "tags": [
+                    "wishlists"
+                ],
+                "summary": "Get all wishlists",
+                "description": "Get all wishlists",
+                "operationId": "index_wishlists",
+                "responses": {
+                    "200": {
+                        "description": "Successful get data wishlists",
+>>>>>>> f84ee83 (feat: CRD Wishlist)
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1529,6 +1543,7 @@
                             }
                         }
                     }
+<<<<<<< HEAD
                 }
             },
             "post": {
@@ -1538,12 +1553,29 @@
                 "summary": "Add a new Vouchers",
                 "description": "Add a new vouchers",
                 "operationId": "store_vouchers",
+=======
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "wishlists"
+                ],
+                "summary": "Add a Wishlist",
+                "description": "Add a Wishlist",
+                "operationId": "store_wishlists",
+>>>>>>> f84ee83 (feat: CRD Wishlist)
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
+<<<<<<< HEAD
                                     "voucher_code": {
                                         "type": "string"
                                     },
@@ -1558,6 +1590,11 @@
                                     },
                                     "expired_at": {
                                         "type": "string"
+=======
+                                    "car_id": {
+                                        "type": "integer",
+                                        "example": "2"
+>>>>>>> f84ee83 (feat: CRD Wishlist)
                                     }
                                 },
                                 "type": "object"
@@ -1577,6 +1614,25 @@
                                             "example": "400"
                                         },
                                         "message": {
+<<<<<<< HEAD
+=======
+                                            "properties": {
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name field is required"
+                                                    }
+                                                },
+                                                "description": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The description field is required"
+                                                    }
+                                                }
+                                            },
+>>>>>>> f84ee83 (feat: CRD Wishlist)
                                             "type": "object"
                                         }
                                     },
@@ -1586,7 +1642,11 @@
                         }
                     },
                     "200": {
+<<<<<<< HEAD
                         "description": "Successful add new vouchers",
+=======
+                        "description": "Successful add data wishlist",
+>>>>>>> f84ee83 (feat: CRD Wishlist)
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1616,6 +1676,7 @@
                 ]
             }
         },
+<<<<<<< HEAD
         "/api/vouchers/{id}": {
             "get": {
                 "tags": [
@@ -1780,6 +1841,16 @@
                 "summary": "Delete voucher",
                 "description": "Delete vouchers",
                 "operationId": "destroy_vouchers",
+=======
+        "/api/wishlists/{id}": {
+            "delete": {
+                "tags": [
+                    "wishlists"
+                ],
+                "summary": "Delete a wishlist",
+                "description": "Delete a wishlist",
+                "operationId": "destroy_wishlists",
+>>>>>>> f84ee83 (feat: CRD Wishlist)
                 "parameters": [
                     {
                         "name": "id",
@@ -1799,7 +1870,11 @@
                 ],
                 "responses": {
                     "200": {
+<<<<<<< HEAD
                         "description": "Successful delete data voucher",
+=======
+                        "description": "Successful delete data type",
+>>>>>>> f84ee83 (feat: CRD Wishlist)
                         "content": {
                             "application/json": {
                                 "schema": {
