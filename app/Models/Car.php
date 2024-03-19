@@ -9,4 +9,8 @@ class Car extends Model
 {
   use HasFactory;
   protected $guarded = ['id'];
+
+  function reviews(){
+    return $this->belongsTo(Review::class);
+}
 }

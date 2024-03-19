@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\TypeController;
 use App\Http\Controllers\Api\VoucherController;
 use App\Http\Controllers\Api\WishlistController;
+use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -81,10 +82,10 @@ Route::controller(WishlistController::class)->prefix('wishlists')->group(functio
   Route::delete('/{wishlist}', 'destroy');
 });
 
-Route::controller(VoucherController::class)->prefix('vouchers')->group(function () {
+Route::controller(ReviewController::class)->prefix('reviews')->group(function () {
   Route::get('/', 'index');
-  Route::get('/{voucher}', 'show');
+  Route::get('/{review}', 'show');
   Route::post('/', 'store');
-  Route::put('/{voucher}', 'update');
-  Route::delete('/{voucher}', 'destroy');
+  Route::put('/{review}', 'update');
+  Route::delete('/{review}', 'destroy');
 });
