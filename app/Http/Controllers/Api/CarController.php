@@ -47,9 +47,80 @@ class CarController extends Controller
    *     )
    * )
    */
-  public function index()
+  public function index(Request $request)
   {
-    return ApiHelper::sendResponse(data: Car::all());
+    $cars = Car::query()->with(['brand', 'type', 'user']);
+    $name = $request->query('name');
+    $transmission = $request->query('transmission');
+    $condition = $request->query('condition');
+    $minPrice = $request->query('min_price'); // Mendapatkan harga minimum dari permintaan
+    $maxPrice = $request->query('max_price'); // Mendapatkan harga maksimum dari permintaan
+    $minKm = $request->query('min_km'); // Mendapatkan jarak minimum dari permintaan
+    $maxKm = $request->query('max_km'); // Mendapatkan jarak maksimum dari permintaan
+    $minYear = $request->query('min_year'); // Mendapatkan jarak minimum dari permintaan
+    $maxYear = $request->query('max_year'); // Mendapatkan jarak maksimum dari permintaan
+    $brandName = $request->query('brand_name'); // Mendapatkan nama merek dari permintaan
+    $typeName = $request->query('type_name'); // Mendapatkan nama tipe dari permintaan
+    $userName = $request->query('user_name'); // Mendapatkan nama user dari permintaan
+
+    $cars->when($name, function ($query) use ($name) {
+      return $query->whereRaw("name LIKE '%" . strtolower($name) . "%'");
+    });
+
+    $cars->when($transmission, function ($query) use ($transmission) {
+      return $query->whereRaw("transmission LIKE '%" . strtolower($transmission) . "%'");
+    });
+
+    $cars->when($condition, function ($query) use ($condition) {
+      return $query->whereRaw("condition LIKE '%" . strtolower($condition) . "%'");
+    });
+
+    $cars->when($minKm, function ($query) use ($minKm) {
+      return $query->where('km', '>=', $minKm);
+    });
+
+    $cars->when($maxKm, function ($query) use ($maxKm) {
+      return $query->where('km', '<=', $maxKm);
+    });
+
+
+    $cars->when($minPrice, function ($query) use ($minPrice) {
+      return $query->where('price', '>=', $minPrice);
+    });
+
+    $cars->when($maxPrice, function ($query) use ($maxPrice) {
+      return $query->where('price', '<=', $maxPrice);
+    });
+
+    $cars->when($minYear, function ($query) use ($minYear) {
+      return $query->where('year', '>=', $minYear);
+    });
+
+    $cars->when($maxYear, function ($query) use ($maxYear) {
+      return $query->where('year', '<=', $maxYear);
+    });
+
+
+    $cars->when($brandName, function ($query) use ($brandName) {
+      return $query->whereHas('brand', function ($query) use ($brandName) {
+        $query->where('name', 'like', '%' . $brandName . '%');
+      });
+    });
+
+    $cars->when($typeName, function ($query) use ($typeName) {
+      return $query->whereHas('type', function ($query) use ($typeName) {
+        $query->where('name', 'like', '%' . $typeName . '%');
+      });
+    });
+
+    $cars->when($userName, function ($query) use ($userName) {
+      return $query->whereHas('user', function ($query) use ($userName) {
+        $query->where('name', 'like', '%' . $userName . '%');
+      });
+    });
+
+
+    return ApiHelper::sendResponse(data: $cars->get());
   }
 
   /**
@@ -199,7 +270,6 @@ class CarController extends Controller
     try {
       $data = $validator->validated();
       $data['user_id'] = auth()->user()->id;
-
       $createdCar = Car::create($data);
 
       return ApiHelper::sendResponse(201, data: $createdCar);

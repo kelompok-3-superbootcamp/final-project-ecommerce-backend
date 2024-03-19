@@ -46,9 +46,16 @@ class TypeController extends Controller
    *     )
    * )
    */
-  public function index()
+  public function index(Request $request)
   {
-    return ApiHelper::sendResponse(data: Type::all());
+    $types = Type::query();
+    $name = $request->query('name');
+
+    $types->when($name, function ($query) use ($name) {
+      return $query->whereRaw("name LIKE '%" . strtolower($name) . "%'");
+    });
+
+    return ApiHelper::sendResponse(data: $types->get());
   }
 
 
