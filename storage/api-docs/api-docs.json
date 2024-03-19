@@ -458,6 +458,148 @@
                 "summary": "Get all cars",
                 "description": "Get all cars",
                 "operationId": "getCars",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Name of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "R34": {
+                                "summary": "car name",
+                                "value": "R34"
+                            }
+                        }
+                    },
+                    {
+                        "name": "transmission",
+                        "in": "query",
+                        "description": "Transmission of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "manual": {
+                                "summary": "car transmission (manual, automatic)",
+                                "value": "manual"
+                            }
+                        }
+                    },
+                    {
+                        "name": "condition",
+                        "in": "query",
+                        "description": "Condition of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "baru": {
+                                "summary": "car condition (baru, second)",
+                                "value": "baru"
+                            }
+                        }
+                    },
+                    {
+                        "name": "min_price",
+                        "in": "query",
+                        "description": "min_price of car",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "100000": {
+                                "summary": "car min_price",
+                                "value": "100000"
+                            }
+                        }
+                    },
+                    {
+                        "name": "max_price",
+                        "in": "query",
+                        "description": "max_price of car",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "100000": {
+                                "summary": "car max_price",
+                                "value": "100000"
+                            }
+                        }
+                    },
+                    {
+                        "name": "min_km",
+                        "in": "query",
+                        "description": "min_km of car",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "769": {
+                                "summary": "car min_km",
+                                "value": "769"
+                            }
+                        }
+                    },
+                    {
+                        "name": "max_km",
+                        "in": "query",
+                        "description": "max_km of car",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "769": {
+                                "summary": "car max_km",
+                                "value": "769"
+                            }
+                        }
+                    },
+                    {
+                        "name": "brand_name",
+                        "in": "query",
+                        "description": "brand_name of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "gtr": {
+                                "summary": "car brand_name",
+                                "value": "gtr"
+                            }
+                        }
+                    },
+                    {
+                        "name": "type_name",
+                        "in": "query",
+                        "description": "type_name of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "bensin": {
+                                "summary": "car type_name",
+                                "value": "bensin"
+                            }
+                        }
+                    },
+                    {
+                        "name": "user_name",
+                        "in": "query",
+                        "description": "user_name of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "john": {
+                                "summary": "car user_name",
+                                "value": "john"
+                            }
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful get data cars",

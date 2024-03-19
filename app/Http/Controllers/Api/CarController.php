@@ -6,7 +6,9 @@ use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Car;
 use Exception;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class CarController extends Controller
@@ -25,6 +27,76 @@ class CarController extends Controller
    *     tags={"cars"},
    *     description="Get all cars",
    *     operationId="getCars",
+   *     @OA\Parameter(
+   *         description="Name of car",
+   *         in="query",
+   *         name="name",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="R34", value="R34", summary="car name"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="Transmission of car",
+   *         in="query",
+   *         name="transmission",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="manual", value="manual", summary="car transmission (manual, automatic)"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="Condition of car",
+   *         in="query",
+   *         name="condition",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="baru", value="baru", summary="car condition (baru, second)"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="min_price of car",
+   *         in="query",
+   *         name="min_price",
+   *         @OA\Schema(type="integer"),
+   *         @OA\Examples(example="100000", value="100000", summary="car min_price"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="max_price of car",
+   *         in="query",
+   *         name="max_price",
+   *         @OA\Schema(type="integer"),
+   *         @OA\Examples(example="100000", value="100000", summary="car max_price"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="min_km of car",
+   *         in="query",
+   *         name="min_km",
+   *         @OA\Schema(type="integer"),
+   *         @OA\Examples(example="769", value="769", summary="car min_km"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="max_km of car",
+   *         in="query",
+   *         name="max_km",
+   *         @OA\Schema(type="integer"),
+   *         @OA\Examples(example="769", value="769", summary="car max_km"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="brand_name of car",
+   *         in="query",
+   *         name="brand_name",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="gtr", value="gtr", summary="car brand_name"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="type_name of car",
+   *         in="query",
+   *         name="type_name",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="bensin", value="bensin", summary="car type_name"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="user_name of car",
+   *         in="query",
+   *         name="user_name",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="john", value="john", summary="car user_name"),
+   *     ),
    *     @OA\Response(
    *         response="200",
    *         description="Successful get data cars",
@@ -49,7 +121,7 @@ class CarController extends Controller
    */
   public function index(Request $request)
   {
-    $cars = Car::query()->with(['brand', 'type', 'user']);
+    // $cars = Car::query()->with(['brand', 'type', 'user']);
     $name = $request->query('name');
     $transmission = $request->query('transmission');
     $condition = $request->query('condition');
@@ -63,64 +135,63 @@ class CarController extends Controller
     $typeName = $request->query('type_name'); // Mendapatkan nama tipe dari permintaan
     $userName = $request->query('user_name'); // Mendapatkan nama user dari permintaan
 
-    $cars->when($name, function ($query) use ($name) {
-      return $query->whereRaw("name LIKE '%" . strtolower($name) . "%'");
+    $cars = DB::table('cars as c')
+      ->join('brands as b', 'b.id', 'c.brand_id')
+      ->join('types as t', 't.id', 'c.type_id')
+      ->join('users as u', 'u.id', 'c.user_id');
+
+    $cars->when($name, function (Builder $query) use ($name) {
+      return $query->whereRaw("c.name LIKE '%" . strtolower($name) . "%'");
     });
 
-    $cars->when($transmission, function ($query) use ($transmission) {
-      return $query->whereRaw("transmission LIKE '%" . strtolower($transmission) . "%'");
+    $cars->when($transmission, function (Builder $query) use ($transmission) {
+      return $query->whereRaw("c.transmission LIKE '%" . strtolower($transmission) . "%'");
     });
 
-    $cars->when($condition, function ($query) use ($condition) {
-      return $query->whereRaw("condition LIKE '%" . strtolower($condition) . "%'");
+    $cars->when($condition, function (Builder $query) use ($condition) {
+      return $query->whereRaw("c.condition LIKE '%" . strtolower($condition) . "%'");
     });
 
-    $cars->when($minKm, function ($query) use ($minKm) {
-      return $query->where('km', '>=', $minKm);
+    $cars->when($minKm, function (Builder $query) use ($minKm) {
+      return $query->where('c.km', '>=', $minKm);
     });
 
-    $cars->when($maxKm, function ($query) use ($maxKm) {
-      return $query->where('km', '<=', $maxKm);
-    });
-
-
-    $cars->when($minPrice, function ($query) use ($minPrice) {
-      return $query->where('price', '>=', $minPrice);
-    });
-
-    $cars->when($maxPrice, function ($query) use ($maxPrice) {
-      return $query->where('price', '<=', $maxPrice);
-    });
-
-    $cars->when($minYear, function ($query) use ($minYear) {
-      return $query->where('year', '>=', $minYear);
-    });
-
-    $cars->when($maxYear, function ($query) use ($maxYear) {
-      return $query->where('year', '<=', $maxYear);
+    $cars->when($maxKm, function (Builder $query) use ($maxKm) {
+      return $query->where('c.km', '<=', $maxKm);
     });
 
 
-    $cars->when($brandName, function ($query) use ($brandName) {
-      return $query->whereHas('brand', function ($query) use ($brandName) {
-        $query->where('name', 'like', '%' . $brandName . '%');
-      });
+    $cars->when($minPrice, function (Builder $query) use ($minPrice) {
+      return $query->where('c.price', '>=', $minPrice);
     });
 
-    $cars->when($typeName, function ($query) use ($typeName) {
-      return $query->whereHas('type', function ($query) use ($typeName) {
-        $query->where('name', 'like', '%' . $typeName . '%');
-      });
+    $cars->when($maxPrice, function (Builder $query) use ($maxPrice) {
+      return $query->where('c.price', '<=', $maxPrice);
     });
 
-    $cars->when($userName, function ($query) use ($userName) {
-      return $query->whereHas('user', function ($query) use ($userName) {
-        $query->where('name', 'like', '%' . $userName . '%');
-      });
+    $cars->when($minYear, function (Builder $query) use ($minYear) {
+      return $query->where('c.year', '>=', $minYear);
+    });
+
+    $cars->when($maxYear, function (Builder $query) use ($maxYear) {
+      return $query->where('c.year', '<=', $maxYear);
     });
 
 
-    return ApiHelper::sendResponse(data: $cars->get());
+    $cars->when($brandName, function (Builder $query) use ($brandName) {
+      return $query->where('b.name', 'like', '%' . $brandName . '%');
+    });
+
+    $cars->when($typeName, function (Builder $query) use ($typeName) {
+      return $query->where('t.name', 'like', '%' . $typeName . '%');
+    });
+
+    $cars->when($userName, function (Builder $query) use ($userName) {
+      return $query->where('u.name', 'like', '%' . $userName . '%');
+    });
+
+
+    return ApiHelper::sendResponse(data: $cars->select('c.*')->get());
   }
 
   /**
