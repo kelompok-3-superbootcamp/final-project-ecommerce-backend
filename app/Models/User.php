@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -54,5 +56,20 @@ class User extends Authenticatable implements JWTSubject
   public function getJWTCustomClaims()
   {
     return [];
+  }
+
+  public function cars(): HasMany
+  {
+    return $this->hasMany(Car::class);
+  }
+
+  public function orders(): HasMany
+  {
+    return $this->hasMany(Order::class);
+  }
+
+  public function wishlists(): HasMany
+  {
+    return $this->hasMany(wishlist::class);
   }
 }
