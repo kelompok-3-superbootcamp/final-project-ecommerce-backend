@@ -27,4 +27,9 @@ class Car extends Model
     return $this->belongsTo(Brand::class);
   }
 
+
+  function reviews()
+  {
+    return $this->belongsTo(Review::class);
+  }
 }

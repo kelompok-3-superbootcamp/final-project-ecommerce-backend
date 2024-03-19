@@ -14,7 +14,7 @@ class BrandController extends Controller
 {
   public function __construct()
   {
-    $this->middleware('auth');
+    $this->middleware('auth')->except(['index', 'show']);
   }
 
   /**
@@ -37,9 +37,16 @@ class BrandController extends Controller
    *     ),
    * )
    */
-  public function index()
+  public function index(Request $request)
   {
-    return ApiHelper::sendResponse(data: Brand::all());
+    $brands = Brand::query();
+    $name = $request->query('name');
+
+    $brands->when($name, function ($query) use ($name) {
+      return $query->whereRaw("name LIKE '%" . strtolower($name) . "%'");
+    });
+
+    return ApiHelper::sendResponse(data: $brands->get());
   }
 
   /**

@@ -13,7 +13,7 @@ class WishlistController extends Controller
 {
     public function __construct()
     {
-      $this->middleware('auth');
+      $this->middleware('auth')->except(['index', 'show']);
     }
     /**
      * Get all wishlists
@@ -108,17 +108,17 @@ class WishlistController extends Controller
         $validator = Validator::make($request->only(['car_id']), [
           'car_id' => 'required|integer'
         ]);
-    
+
         if ($validator->fails()) {
           return ApiHelper::sendResponse(400, $validator->messages());
         }
-    
+
         try {
           $data = $validator->validated();
           $data['user_id'] = auth()->user()->id;
-    
+
           $createdWishlist = Wishlist::create($data);
-    
+
           return ApiHelper::sendResponse(201, data: $createdWishlist);
         } catch (Exception $e) {
           return ApiHelper::sendResponse(500, $e->getMessage());
@@ -192,7 +192,7 @@ class WishlistController extends Controller
     {
         try {
           $wishlist->delete();
-    
+
           return ApiHelper::sendResponse(200);
         } catch (Exception $e) {
           return ApiHelper::sendResponse(500, $e->getMessage());
