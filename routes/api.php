@@ -73,7 +73,6 @@ Route::controller(VoucherController::class)->prefix('vouchers')->group(function 
   Route::put('/{voucher}', 'update');
   Route::delete('/{voucher}', 'destroy');
 });
-
 Route::controller(WishlistController::class)->prefix('wishlists')->group(function () {
   Route::get('/', 'index');
   Route::get('/{wishlist}', 'show');
@@ -81,7 +80,6 @@ Route::controller(WishlistController::class)->prefix('wishlists')->group(functio
   Route::put('/{wishlist}', 'update');
   Route::delete('/{wishlist}', 'destroy');
 });
-
 Route::controller(ReviewController::class)->prefix('reviews')->group(function () {
   Route::get('/', 'index');
   Route::get('/{review}', 'show');
