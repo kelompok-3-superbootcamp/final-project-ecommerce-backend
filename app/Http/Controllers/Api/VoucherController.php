@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enum\DiscountType;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Type;
+use App\Models\Voucher;
+use App\Rules\DiscountValueValidation;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Enum;
 
-class TypeController extends Controller
+class VoucherController extends Controller
 {
   public function __construct()
   {
@@ -17,16 +21,16 @@ class TypeController extends Controller
   }
 
   /**
-   * Get types of a car
+   * Get voucher
    *
    * @OA\Get(
-   *     path="/api/types",
-   *     tags={"types"},
-   *     description="Get types car",
-   *     operationId="index_types",
+   *     path="/api/vouchers",
+   *     tags={"vouchers"},
+   *     description="Get vouchers",
+   *     operationId="index_vouchers",
    *     @OA\Response(
    *         response="200",
-   *         description="Successful get data types",
+   *         description="Successful get data vouchers",
    *         @OA\JsonContent(
    *             @OA\Property(
    *                 property="status",
@@ -48,18 +52,18 @@ class TypeController extends Controller
    */
   public function index()
   {
-    return ApiHelper::sendResponse(data: Type::all());
+    return ApiHelper::sendResponse(data: Voucher::all());
   }
 
 
   /**
-   * Get type of a car
+   * Get single voucher
    *
    * @OA\Get(
-   *     path="/api/types/{id}",
-   *     tags={"types"},
-   *     description="Get type car",
-   *     operationId="show_types",
+   *     path="/api/vouchers/{id}",
+   *     tags={"vouchers"},
+   *     description="Get single voucher",
+   *     operationId="show_vouchers",
    *     security={{ "bearerAuth": {} }},
    *     @OA\Parameter(
    *         description="Parameter id",
@@ -71,7 +75,7 @@ class TypeController extends Controller
    *     ),
    *     @OA\Response(
    *         response="200",
-   *         description="Successful get data type",
+   *         description="Successful get single voucher",
    *         @OA\JsonContent(
    *             @OA\Property(
    *                 property="status",
@@ -91,27 +95,30 @@ class TypeController extends Controller
    *     )
    * )
    */
-  public function show(Type $type)
+  public function show(Voucher $voucher)
   {
-    return ApiHelper::sendResponse(data: $type);
+    return ApiHelper::sendResponse(data: $voucher);
   }
 
 
   /**
-   * Add type of a car
+   * Add a new Vouchers
    *
    * @OA\Post(
-   *     path="/api/types",
-   *     tags={"types"},
-   *     description="Add type of a car",
-   *     operationId="store_types",
+   *     path="/api/vouchers",
+   *     tags={"vouchers"},
+   *     description="Add a new vouchers",
+   *     operationId="store_vouchers",
    *     security={{ "bearerAuth": {} }},
    *     @OA\RequestBody(
    *         required=true,
    *         @OA\JsonContent(
    *             type="object",
-   *             @OA\Property(property="name", type="string"),
-   *             @OA\Property(property="description", type="string"),
+   *             @OA\Property(property="voucher_code", type="string"),
+   *             @OA\Property(property="discount_value", type="string"),
+   *             @OA\Property(property="discount_type", type="string"),
+   *             @OA\Property(property="quota", type="integer"),
+   *             @OA\Property(property="expired_at", type="string"),
    *         )
    *     ),
    *     @OA\Response(
@@ -120,16 +127,12 @@ class TypeController extends Controller
    *        @OA\JsonContent(
    *           @OA\Property(property="status", type="integer", example="400"),
    *           @OA\Property(property="message", type="object",
-   *               @OA\Property(property="name", type="array",
-   *                 @OA\Items(type="string", example="The name field is required")),
-   *               @OA\Property(property="description", type="array",
-   *                 @OA\Items(type="string", example="The description field is required")),
    *           ),
    *        ),
    *     ),
    *     @OA\Response(
    *         response="200",
-   *         description="Successful add data types",
+   *         description="Successful add new vouchers",
    *         @OA\JsonContent(
    *             @OA\Property(
    *                 property="status",
@@ -151,9 +154,18 @@ class TypeController extends Controller
    */
   public function store(Request $request)
   {
-    $validator = Validator::make($request->only(['name', 'description']), [
-      'name' => 'required',
-      'description' => 'required',
+    $validator = Validator::make($request->only([
+      'voucher_code',
+      'discount_value',
+      'discount_type',
+      'quota',
+      'expired_at'
+    ]), [
+      'voucher_code' => 'required|min:5',
+      'discount_value' => ['required', 'numeric', new DiscountValueValidation],
+      'discount_type' => ['required', new Enum(DiscountType::class)],
+      'quota' => 'required|numeric',
+      'expired_at' => 'required|date_format:Y-m-d H:i:s'
     ]);
 
     if ($validator->fails()) {
@@ -163,9 +175,9 @@ class TypeController extends Controller
     try {
       $data = $validator->validated();
 
-      $createdType = Type::create($data);
+      $createdVoucher = Voucher::create($data);
 
-      return ApiHelper::sendResponse(201, data: $createdType);
+      return ApiHelper::sendResponse(201, data: $createdVoucher);
     } catch (Exception $e) {
       return ApiHelper::sendResponse(500, $e->getMessage());
     }
@@ -173,13 +185,13 @@ class TypeController extends Controller
 
 
   /**
-   * Edit type of a car
+   * Edit voucher
    *
    * @OA\Put(
-   *     path="/api/types/{id}",
-   *     tags={"types"},
-   *     description="Edit type of a car",
-   *     operationId="update_types",
+   *     path="/api/vouchers/{id}",
+   *     tags={"vouchers"},
+   *     description="Edit voucher",
+   *     operationId="update_voucher",
    *     security={{ "bearerAuth": {} }},
    *     @OA\Parameter(
    *         description="Parameter id",
@@ -193,8 +205,11 @@ class TypeController extends Controller
    *         required=true,
    *         @OA\JsonContent(
    *             type="object",
-   *             @OA\Property(property="name", type="string"),
-   *             @OA\Property(property="description", type="string"),
+   *             @OA\Property(property="voucher_code", type="string"),
+   *             @OA\Property(property="dicount_value", type="string"),
+   *             @OA\Property(property="dicount_type", type="string"),
+   *             @OA\Property(property="quota", type="integer"),
+   *             @OA\Property(property="expired_at", type="string"),
    *         )
    *     ),
    *     @OA\Response(
@@ -203,16 +218,12 @@ class TypeController extends Controller
    *        @OA\JsonContent(
    *           @OA\Property(property="status", type="integer", example="400"),
    *           @OA\Property(property="message", type="object",
-   *               @OA\Property(property="name", type="array",
-   *                 @OA\Items(type="string", example="The name field is required")),
-   *               @OA\Property(property="description", type="array",
-   *                 @OA\Items(type="string", example="The description field is required")),
    *           ),
    *        ),
    *     ),
    *     @OA\Response(
    *         response="200",
-   *         description="Successful update data types",
+   *         description="Successful update voucher",
    *         @OA\JsonContent(
    *             @OA\Property(
    *                 property="status",
@@ -232,11 +243,20 @@ class TypeController extends Controller
    *     )
    * )
    */
-  public function update(Type $type, Request $request)
+  public function update(Voucher $voucher, Request $request)
   {
-    $validator = Validator::make($request->only(['name', 'description']), [
-      'name' => 'sometimes|required',
-      'description' => 'sometimes|required',
+    $validator = Validator::make($request->only([
+      'voucher_code',
+      'discount_value',
+      'discount_type',
+      'quota',
+      'expired_at'
+    ]), [
+      'voucher_code' => 'sometimes|required',
+      'discount_value' => ['sometimes', 'required', 'numeric', new DiscountValueValidation],
+      'discount_type' => ['sometimes', 'required', new Enum(DiscountType::class)],
+      'quota' => 'sometimes|required|numeric',
+      'expired_at' => 'sometimes|required|date_format:Y-m-d H:i:s'
     ]);
 
     if ($validator->fails()) {
@@ -246,9 +266,9 @@ class TypeController extends Controller
     try {
       $data = $validator->validated();
 
-      $updatedType = $type->update($data);
+      $updatedVoucher = $voucher->update($data);
 
-      return ApiHelper::sendResponse(201, data: $updatedType);
+      return ApiHelper::sendResponse(201, data: $updatedVoucher);
     } catch (Exception $e) {
       return ApiHelper::sendResponse(500, $e->getMessage());
     }
@@ -256,13 +276,13 @@ class TypeController extends Controller
 
 
   /**
-   * Delete types of a car
+   * Delete voucher
    *
    * @OA\Delete(
-   *     path="/api/types/{id}",
-   *     tags={"types"},
-   *     description="Delete type of a car",
-   *     operationId="destroy_types",
+   *     path="/api/vouchers/{id}",
+   *     tags={"vouchers"},
+   *     description="Delete vouchers",
+   *     operationId="destroy_vouchers",
    *     security={{ "bearerAuth": {} }},
    *     @OA\Parameter(
    *         description="Parameter id",
@@ -274,7 +294,7 @@ class TypeController extends Controller
    *     ),
    *     @OA\Response(
    *         response="200",
-   *         description="Successful delete data type",
+   *         description="Successful delete data voucher",
    *         @OA\JsonContent(
    *             @OA\Property(
    *                 property="status",
@@ -294,10 +314,10 @@ class TypeController extends Controller
    *     )
    * )
    */
-  public function destroy(Type $type)
+  public function destroy(Voucher $voucher)
   {
     try {
-      $type->delete();
+      $voucher->delete();
 
       return ApiHelper::sendResponse(200);
     } catch (Exception $e) {

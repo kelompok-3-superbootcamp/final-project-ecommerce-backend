@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CarController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\TypeController;
+use App\Http\Controllers\Api\VoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -61,4 +62,12 @@ Route::controller(OrderController::class)->prefix('orders')->group(function () {
   Route::post('/', 'store');
   Route::put('/{order}', 'update');
   Route::delete('/{order}', 'destroy');
+});
+
+Route::controller(VoucherController::class)->prefix('vouchers')->group(function () {
+  Route::get('/', 'index');
+  Route::get('/{voucher}', 'show');
+  Route::post('/', 'store');
+  Route::put('/{voucher}', 'update');
+  Route::delete('/{voucher}', 'destroy');
 });

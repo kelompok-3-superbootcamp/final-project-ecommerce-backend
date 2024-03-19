@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enum\PaymentStatus;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Enum;
 
 class OrderController extends Controller
 {
@@ -244,7 +247,7 @@ class OrderController extends Controller
     ]), [
       'date' => 'sometimes|required|date_format:Y-m-d H:i:s',
       'payment_method' => 'sometimes|required',
-      'payment_status' => 'sometimes|required',
+      'payment_status' => ['sometimes', 'required', new Enum(PaymentStatus::class)],
       'payment_url' => 'sometimes|required',
       'total_price' => 'sometimes|required|numeric',
       'car_id' => 'sometimes|required|exists:cars,id',
@@ -255,12 +258,18 @@ class OrderController extends Controller
     }
 
     try {
-      $data = $validator->validated();
-      $data['user_id'] = auth()->user()->id;
+      DB::transaction(function () use ($validator, $order) {
+        $data = $validator->validated();
+        $data['user_id'] = auth()->user()->id;
 
-      $updatedOrder = $order->update($data);
+        $updatedOrder = $order->update($data);
 
-      return ApiHelper::sendResponse(201, data: $updatedOrder);
+        if ($data['payment_status'] === PaymentStatus::COMPLETE) {
+          DB::table('cars')->where('id', $order->car_id)->decrement('stock');
+        }
+
+        return ApiHelper::sendResponse(201, data: $updatedOrder);
+      });
     } catch (Exception $e) {
       return ApiHelper::sendResponse(500, $e->getMessage());
     }
