@@ -27,7 +27,7 @@ class Car extends Model
     return $this->belongsTo(User::class);
   }
 
-  public function order(): HasMany
+  public function orders(): HasMany
   {
     return $this->hasMany(Order::class);
   }
