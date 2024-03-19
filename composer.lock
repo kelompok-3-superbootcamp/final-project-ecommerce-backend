@@ -1660,6 +1660,7 @@
         {
             "name": "lcobucci/clock",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "version": "3.0.0",
             "source": {
                 "type": "git",
@@ -1672,25 +1673,37 @@
                 "reference": "039ef98c6b57b101d10bd11d8fdfda12cbd996dc",
 =======
             "version": "2.3.0",
+=======
+            "version": "3.0.0",
+>>>>>>> f2a3836 (feat: CRD Wishlist)
             "source": {
                 "type": "git",
                 "url": "https://github.com/lcobucci/clock.git",
-                "reference": "c7aadcd6fd97ed9e199114269c0be3f335e38876"
+                "reference": "039ef98c6b57b101d10bd11d8fdfda12cbd996dc"
             },
             "dist": {
                 "type": "zip",
+<<<<<<< HEAD
                 "url": "https://api.github.com/repos/lcobucci/clock/zipball/c7aadcd6fd97ed9e199114269c0be3f335e38876",
                 "reference": "c7aadcd6fd97ed9e199114269c0be3f335e38876",
 >>>>>>> 6fde6d1 (feat: CRUD review)
+=======
+                "url": "https://api.github.com/repos/lcobucci/clock/zipball/039ef98c6b57b101d10bd11d8fdfda12cbd996dc",
+                "reference": "039ef98c6b57b101d10bd11d8fdfda12cbd996dc",
+>>>>>>> f2a3836 (feat: CRD Wishlist)
                 "shasum": ""
             },
             "require": {
                 "php": "~8.1.0 || ~8.2.0",
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "psr/clock": "^1.0"
 =======
                 "stella-maris/clock": "^0.1.7"
 >>>>>>> 6fde6d1 (feat: CRUD review)
+=======
+                "psr/clock": "^1.0"
+>>>>>>> f2a3836 (feat: CRD Wishlist)
             },
             "provide": {
                 "psr/clock-implementation": "1.0"
@@ -1724,11 +1737,7 @@
             "description": "Yet another clock abstraction",
             "support": {
                 "issues": "https://github.com/lcobucci/clock/issues",
-<<<<<<< HEAD
                 "source": "https://github.com/lcobucci/clock/tree/3.0.0"
-=======
-                "source": "https://github.com/lcobucci/clock/tree/2.3.0"
->>>>>>> 6fde6d1 (feat: CRUD review)
             },
             "funding": [
                 {
@@ -1740,11 +1749,7 @@
                     "type": "patreon"
                 }
             ],
-<<<<<<< HEAD
             "time": "2022-12-19T15:00:24+00:00"
-=======
-            "time": "2022-12-19T14:38:11+00:00"
->>>>>>> 6fde6d1 (feat: CRUD review)
         },
         {
             "name": "lcobucci/jwt",
