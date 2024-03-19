@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\TypeController;
 use App\Http\Controllers\Api\VoucherController;
 use App\Http\Controllers\Api\WishlistController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\VoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -88,4 +89,12 @@ Route::controller(ReviewController::class)->prefix('reviews')->group(function ()
   Route::post('/', 'store');
   Route::put('/{review}', 'update');
   Route::delete('/{review}', 'destroy');
+});
+
+Route::controller(VoucherController::class)->prefix('vouchers')->group(function () {
+  Route::get('/', 'index');
+  Route::get('/{voucher}', 'show');
+  Route::post('/', 'store');
+  Route::put('/{voucher}', 'update');
+  Route::delete('/{voucher}', 'destroy');
 });

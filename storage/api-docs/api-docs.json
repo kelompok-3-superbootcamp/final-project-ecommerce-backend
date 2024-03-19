@@ -2175,6 +2175,7 @@
                     }
                 ]
             }
+<<<<<<< HEAD
         },
         "/api/wishlists": {
             "get": {
@@ -2361,6 +2362,8 @@
                     }
                 ]
             }
+=======
+>>>>>>> 9a72507 (feat: voucher crud)
         }
     },
     "components": {
