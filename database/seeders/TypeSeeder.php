@@ -14,8 +14,7 @@ class TypeSeeder extends Seeder
     public function run(): void
     {
         $types = [
-            ['name' => 'Matic', 'description' => 'Mobil transmisi matic'],
-            ['name' => 'Manual', 'description' => 'Mobil transmisi manual'],
+            ['name' => 'Hybrid', 'description' => 'Mobil transmisi manual'],
             ['name' => 'Bensin', 'description' => 'Mobil berbahan bakar bensin'],
             ['name' => 'Solar', 'description' => 'Mobil berbahan bakar solar'],
             ['name' => 'Listrik', 'description' => 'Mobil listrik'],
