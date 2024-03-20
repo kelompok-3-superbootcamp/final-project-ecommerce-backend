@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CarController;
+use App\Http\Controllers\Api\MidtransCallbackController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\TypeController;
 use App\Http\Controllers\Api\VoucherController;
@@ -63,6 +64,7 @@ Route::controller(OrderController::class)->prefix('orders')->group(function () {
   Route::get('/{order}', 'show');
   Route::post('/', 'store');
   Route::put('/{order}', 'update');
+  Route::post('/checkout/{order}', 'checkout');
   Route::delete('/{order}', 'destroy');
 });
 
@@ -87,3 +89,5 @@ Route::controller(ReviewController::class)->prefix('reviews')->group(function ()
   Route::put('/{review}', 'update');
   Route::delete('/{review}', 'destroy');
 });
+
+Route::post('/midtrans/callback', [MidtransCallbackController::class, 'callback']);

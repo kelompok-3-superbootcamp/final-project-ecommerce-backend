@@ -1160,21 +1160,6 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "date": {
-                                        "type": "string"
-                                    },
-                                    "payment_method": {
-                                        "type": "string"
-                                    },
-                                    "payment_status": {
-                                        "type": "string"
-                                    },
-                                    "payment_url": {
-                                        "type": "string"
-                                    },
-                                    "total_price": {
-                                        "type": "integer"
-                                    },
                                     "car_id": {
                                         "type": "integer"
                                     }
@@ -1397,6 +1382,63 @@
                                         "status": {
                                             "type": "integer",
                                             "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/checkout/{id}": {
+            "post": {
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Checkout order",
+                "description": "Checkout order",
+                "operationId": "checkout_orders",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Parameter id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "int": {
+                                "summary": "Parameter id.",
+                                "value": "1"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful checkout order",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "201"
                                         },
                                         "message": {
                                             "type": "string",

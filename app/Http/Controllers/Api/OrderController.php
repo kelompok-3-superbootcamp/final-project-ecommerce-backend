@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Enum\PaymentStatus;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
+use App\Models\Car;
 use App\Models\Order;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -111,11 +113,6 @@ class OrderController extends Controller
    *         required=true,
    *         @OA\JsonContent(
    *             type="object",
-   *             @OA\Property(property="date", type="string"),
-   *             @OA\Property(property="payment_method", type="string"),
-   *             @OA\Property(property="payment_status", type="string"),
-   *             @OA\Property(property="payment_url", type="string"),
-   *             @OA\Property(property="total_price", type="integer"),
    *             @OA\Property(property="car_id", type="integer"),
    *         )
    *     ),
@@ -148,18 +145,8 @@ class OrderController extends Controller
   public function store(Request $request)
   {
     $validator = Validator::make($request->only([
-      'date',
-      'payment_method',
-      'payment_status',
-      'payment_url',
-      'total_price',
       'car_id',
     ]), [
-      'date' => 'required|date_format:Y-m-d H:i:s',
-      'payment_method' => 'required',
-      'payment_status' => 'required',
-      'payment_url' => 'required',
-      'total_price' => 'required|numeric',
       'car_id' => 'required|exists:cars,id',
     ]);
 
@@ -169,9 +156,21 @@ class OrderController extends Controller
 
     try {
       $data = $validator->validated();
-      $data['user_id'] = auth()->user()->id;
+      $car = Car::findOrFail($data['car_id']);
 
-      $createdOrder = Order::create($data);
+      if ($car->stock <= 0) {
+        return ApiHelper::sendResponse(404, data: "Out of stock");
+      }
+
+      $createdOrder = Order::create([
+        'date' => Carbon::now(),
+        'payment_method' => 'midtrans',
+        'payment_status' => 'pending',
+        'payment_url' => 'none',
+        'total_price' => $car->price,
+        'car_id' => $data['car_id'],
+        'user_id' => auth()->user()->id
+      ]);
 
       return ApiHelper::sendResponse(201, data: $createdOrder);
     } catch (Exception $e) {
@@ -272,6 +271,83 @@ class OrderController extends Controller
       });
     } catch (Exception $e) {
       return ApiHelper::sendResponse(500, $e->getMessage());
+    }
+  }
+
+
+  /**
+   * Checkout order
+   *
+   * @OA\Post(
+   *     path="/api/orders/checkout/{id}",
+   *     tags={"orders"},
+   *     description="Checkout order",
+   *     operationId="checkout_orders",
+   *     security={{ "bearerAuth": {} }},
+   *     @OA\Parameter(
+   *         description="Parameter id",
+   *         in="path",
+   *         name="id",
+   *         required=true,
+   *         @OA\Schema(type="integer"),
+   *         @OA\Examples(example="int", value="1", summary="Parameter id."),
+   *     ),
+   *     @OA\Response(
+   *         response="200",
+   *         description="Successful checkout order",
+   *         @OA\JsonContent(
+   *             @OA\Property(
+   *                 property="status",
+   *                 type="integer",
+   *                 example="201",
+   *             ),
+   *             @OA\Property(
+   *                 property="message",
+   *                 type="string",
+   *                 example="ok",
+   *             ),
+   *             @OA\Property(
+   *                 property="data",
+   *                 type="object",
+   *             ),
+   *         )
+   *     )
+   * )
+   */
+  public function checkout(Order $order)
+  {
+    if ($order->payment_method == 'midtrans') {
+      // Call Midtrans API
+      \Midtrans\Config::$serverKey = config('services.midtrans.serverKey');
+      \Midtrans\Config::$isProduction = config('services.midtrans.isProduction');
+      \Midtrans\Config::$isSanitized = config('services.midtrans.isSanitized');
+      \Midtrans\Config::$is3ds = config('services.midtrans.is3ds');
+
+      // Create Midtrans Params
+      $midtransParams = [
+        'transaction_details' => [
+          'order_id' => $order->id,
+          'gross_amount' => (int) $order->total_price,
+        ],
+        'customer_details' => [
+          'first_name' => auth()->user()->id,
+          'email' => auth()->user()->email,
+        ],
+        'enabled_payments' => ['gopay', 'bank_transfer'],
+        'vtweb' => []
+      ];
+
+      // Get Snap Payment Page URL
+      $paymentUrl = \Midtrans\Snap::createTransaction($midtransParams)->redirect_url;
+
+      // Save payment URL to booking
+      $order->payment_url = $paymentUrl;
+      // Decrement stock
+      DB::table('cars')->where('id', $order->car_id)->decrement('stock');
+      $order->save();
+
+
+      return ApiHelper::sendResponse(201, data: $order);
     }
   }
 
