@@ -2,24 +2,27 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class TypeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
-    {
-        $types = [
-            ['name' => 'Hybrid', 'description' => 'Mobil transmisi manual'],
-            ['name' => 'Bensin', 'description' => 'Mobil berbahan bakar bensin'],
-            ['name' => 'Solar', 'description' => 'Mobil berbahan bakar solar'],
-            ['name' => 'Listrik', 'description' => 'Mobil listrik'],
-        ];
+  /**
+   * Run the database seeds.
+   */
+  public function run(): void
+  {
+    $date = Carbon::now()->modify('+1 day');
+    $timestamps = clone $date;
 
-        DB::table('types')->insert($types);
-    }
+    $types = [
+      ['name' => 'Hybrid', 'description' => 'Mobil transmisi manual', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+      ['name' => 'Bensin', 'description' => 'Mobil berbahan bakar bensin', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+      ['name' => 'Solar', 'description' => 'Mobil berbahan bakar solar', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+      ['name' => 'Listrik', 'description' => 'Mobil listrik', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+    ];
+
+    DB::table('types')->insert($types);
+  }
 }

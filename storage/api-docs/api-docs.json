@@ -474,6 +474,20 @@
                         }
                     },
                     {
+                        "name": "color",
+                        "in": "query",
+                        "description": "Color of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "white": {
+                                "summary": "car color",
+                                "value": "white"
+                            }
+                        }
+                    },
+                    {
                         "name": "transmission",
                         "in": "query",
                         "description": "Transmission of car",
@@ -892,6 +906,9 @@
                                     "name": {
                                         "type": "string"
                                     },
+                                    "color": {
+                                        "type": "string"
+                                    },
                                     "description": {
                                         "type": "string"
                                     },
@@ -946,6 +963,13 @@
                                                     "items": {
                                                         "type": "string",
                                                         "example": "The name field is required"
+                                                    }
+                                                },
+                                                "color": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The color field is required"
                                                     }
                                                 },
                                                 "description": {

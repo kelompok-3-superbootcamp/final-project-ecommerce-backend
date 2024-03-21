@@ -35,6 +35,13 @@ class CarController extends Controller
    *         @OA\Examples(example="R34", value="R34", summary="car name"),
    *     ),
    *     @OA\Parameter(
+   *         description="Color of car",
+   *         in="query",
+   *         name="color",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="white", value="white", summary="car color"),
+   *     ),
+   *     @OA\Parameter(
    *         description="Transmission of car",
    *         in="query",
    *         name="transmission",
@@ -138,7 +145,8 @@ class CarController extends Controller
     $cars = DB::table('cars as c')
       ->join('brands as b', 'b.id', 'c.brand_id')
       ->join('types as t', 't.id', 'c.type_id')
-      ->join('users as u', 'u.id', 'c.user_id');
+      ->join('users as u', 'u.id', 'c.user_id')
+      ->leftJoin('wishlists as w', 'w.car_id', 'c.id');
 
     $cars->when($name, function (Builder $query) use ($name) {
       return $query->whereRaw("c.name LIKE '%" . strtolower($name) . "%'");
@@ -190,8 +198,25 @@ class CarController extends Controller
       return $query->where('u.name', 'like', '%' . $userName . '%');
     });
 
-
-    return ApiHelper::sendResponse(data: $cars->select('c.*')->get());
+    return ApiHelper::sendResponse(data: $cars->select(
+      'c.id',
+      'c.name',
+      'c.color',
+      'c.description',
+      'c.price',
+      'c.transmission',
+      'c.condition',
+      'c.year',
+      'c.km',
+      'c.stock',
+      'c.image',
+      't.name as type_name',
+      'b.name as brand_name',
+      'u.name as user_name',
+      'c.created_at',
+      'c.updated_at',
+      DB::raw('IF(w.car_id IS NOT NULL, 1, 0) as isWishList')
+    )->get());
   }
 
   /**
@@ -319,13 +344,14 @@ class CarController extends Controller
   public function store(Request $request)
   {
     $validator = Validator::make($request->only([
-      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id',
+      'name', 'color', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id',
     ]), [
       'name' => 'required',
+      'color' => 'required',
       'description' => 'required',
       'price' => 'required|integer',
-      'transmission' => 'required',
-      'condition' => 'required',
+      'transmission' => 'required|in:automatic,manual',
+      'condition' => 'required|in:baru,bekas',
       'year' => 'required|integer',
       'km' => 'required|integer',
       'stock' => 'required|integer',
@@ -372,6 +398,7 @@ class CarController extends Controller
    *         @OA\JsonContent(
    *             type="object",
    *             @OA\Property(property="name", type="string"),
+   *             @OA\Property(property="color", type="string"),
    *             @OA\Property(property="description", type="string"),
    *             @OA\Property(property="price", type="integer"),
    *             @OA\Property(property="transmission", type="string"),
@@ -392,6 +419,8 @@ class CarController extends Controller
    *           @OA\Property(property="message", type="object",
    *               @OA\Property(property="name", type="array",
    *                 @OA\Items(type="string", example="The name field is required")),
+   *               @OA\Property(property="color", type="array",
+   *                 @OA\Items(type="string", example="The color field is required")),
    *               @OA\Property(property="description", type="array",
    *                 @OA\Items(type="string", example="The description field is required")),
    *               @OA\Property(property="price", type="array",
@@ -440,9 +469,10 @@ class CarController extends Controller
   public function update(Car $car, Request $request)
   {
     $validator = Validator::make($request->only([
-      'name', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id',
+      'name', 'color', 'description', 'price', 'transmission', 'condition', 'year', 'km', 'stock', 'image', 'brand_id', 'type_id',
     ]), [
       'name' => 'sometimes|required',
+      'color' => 'sometimes|required',
       'description' => 'sometimes|required',
       'price' => 'sometimes|required|integer',
       'transmission' => 'sometimes|required',
