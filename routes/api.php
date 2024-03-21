@@ -57,6 +57,8 @@ Route::controller(CarController::class)->prefix('cars')->group(function () {
   Route::post('/', 'store');
   Route::put('/{car}', 'update');
   Route::delete('/{car}', 'destroy');
+
+  Route::get('/based-on-seller', 'basedOnSeller');
 });
 
 Route::controller(OrderController::class)->prefix('orders')->group(function () {
