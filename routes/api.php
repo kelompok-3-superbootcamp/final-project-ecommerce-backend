@@ -53,10 +53,13 @@ Route::controller(BrandController::class)->prefix('brands')->group(function () {
 
 Route::controller(CarController::class)->prefix('cars')->group(function () {
   Route::get('/', 'index');
-  Route::get('/{car}', 'show');
+  Route::get('/{car_id}', 'show');
   Route::post('/', 'store');
   Route::put('/{car}', 'update');
   Route::delete('/{car}', 'destroy');
+
+  Route::get('/based-on-seller', 'basedOnSeller');
+  Route::get('/based-on-profile/{profile}', 'basedOnProfile');
 });
 
 Route::controller(OrderController::class)->prefix('orders')->group(function () {
@@ -66,6 +69,8 @@ Route::controller(OrderController::class)->prefix('orders')->group(function () {
   Route::put('/{order}', 'update');
   Route::post('/checkout/{order}', 'checkout');
   Route::delete('/{order}', 'destroy');
+
+  Route::get('/user/{status}', 'userOrders');
 });
 
 Route::controller(VoucherController::class)->prefix('vouchers')->group(function () {
@@ -82,6 +87,7 @@ Route::controller(WishlistController::class)->prefix('wishlists')->group(functio
   Route::put('/{wishlist}', 'update');
   Route::delete('/{wishlist}', 'destroy');
 });
+
 Route::controller(ReviewController::class)->prefix('reviews')->group(function () {
   Route::get('/', 'index');
   Route::get('/{review}', 'show');

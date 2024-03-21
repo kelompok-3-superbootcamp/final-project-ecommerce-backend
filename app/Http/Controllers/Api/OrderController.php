@@ -57,6 +57,68 @@ class OrderController extends Controller
   }
 
   /**
+   * Get all ordered cars based on payment_status
+   *
+   * @OA\Get(
+   *     path="/api/orders/user/{status}",
+   *     tags={"orders"},
+   *     description="Get all ordered cars based on payment_status",
+   *     operationId="getOrderedCarsBasedOnPaymentStatus",
+   *     security={{ "bearerAuth": {} }},
+   *     @OA\Parameter(
+   *         description="Parameter payment_status",
+   *         in="path",
+   *         name="status",
+   *         required=true,
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="pending", value="pending", summary="Parameter payment status (complete|pending|error|closed)"),
+   *     ),
+   *     @OA\Response(
+   *         response="200",
+   *         description="Successful get data ordered cars",
+   *         @OA\JsonContent(
+   *             @OA\Property(
+   *                 property="status",
+   *                 type="integer",
+   *                 example="200",
+   *             ),
+   *             @OA\Property(
+   *                 property="message",
+   *                 type="string",
+   *                 example="ok",
+   *             ),
+   *             @OA\Property(
+   *                 property="data",
+   *                 type="object",
+   *             ),
+   *         )
+   *     )
+   * )
+   */
+  public function userOrders(string $status)
+  {
+    $orderedCars = DB::table('orders as o')
+      ->join('cars as c', 'c.id', 'o.car_id')
+      ->join('users as u', 'u.id', 'o.user_id')
+      ->where('o.payment_status', $status)
+      ->where('u.id', auth()->user()->id)
+      ->select(
+        'c.id',
+        'o.payment_status',
+        'c.name',
+        'c.description',
+        'c.price',
+        'c.transmission',
+        'c.condition',
+        'c.image',
+        'c.created_at',
+        'c.updated_at',
+      )->get();
+
+    return ApiHelper::sendResponse(data: $orderedCars);
+  }
+
+  /**
    * Get order detail
    *
    * @OA\Get(

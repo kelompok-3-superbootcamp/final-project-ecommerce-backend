@@ -76,11 +76,11 @@
                                 "properties": {
                                     "email": {
                                         "type": "string",
-                                        "example": "adics@gmail.com"
+                                        "example": "test@example.com"
                                     },
                                     "password": {
                                         "type": "string",
-                                        "example": "pw"
+                                        "example": "password"
                                     }
                                 },
                                 "type": "object"
@@ -474,6 +474,20 @@
                         }
                     },
                     {
+                        "name": "color",
+                        "in": "query",
+                        "description": "Color of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "white": {
+                                "summary": "car color",
+                                "value": "white"
+                            }
+                        }
+                    },
+                    {
                         "name": "transmission",
                         "in": "query",
                         "description": "Transmission of car",
@@ -488,6 +502,20 @@
                         }
                     },
                     {
+                        "name": "location",
+                        "in": "query",
+                        "description": "Location of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "south": {
+                                "summary": "car location",
+                                "value": "south"
+                            }
+                        }
+                    },
+                    {
                         "name": "condition",
                         "in": "query",
                         "description": "Condition of car",
@@ -496,7 +524,7 @@
                         },
                         "examples": {
                             "baru": {
-                                "summary": "car condition (baru, second)",
+                                "summary": "car condition (baru, bekas)",
                                 "value": "baru"
                             }
                         }
@@ -651,6 +679,9 @@
                                     "transmission": {
                                         "type": "string"
                                     },
+                                    "location": {
+                                        "type": "string"
+                                    },
                                     "condition": {
                                         "type": "string"
                                     },
@@ -717,6 +748,13 @@
                                                     "items": {
                                                         "type": "string",
                                                         "example": "The transmission field is required"
+                                                    }
+                                                },
+                                                "location": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The location field is required"
                                                     }
                                                 },
                                                 "condition": {
@@ -808,6 +846,263 @@
                 ]
             }
         },
+        "/api/cars/based-on-seller": {
+            "get": {
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get all cars based on current logged seller",
+                "description": "Get all cars based on current logged seller",
+                "operationId": "getCarsBasedOnSeller",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Name of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "R34": {
+                                "summary": "car name",
+                                "value": "R34"
+                            }
+                        }
+                    },
+                    {
+                        "name": "color",
+                        "in": "query",
+                        "description": "Color of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "white": {
+                                "summary": "car color",
+                                "value": "white"
+                            }
+                        }
+                    },
+                    {
+                        "name": "transmission",
+                        "in": "query",
+                        "description": "Transmission of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "manual": {
+                                "summary": "car transmission (manual, automatic)",
+                                "value": "manual"
+                            }
+                        }
+                    },
+                    {
+                        "name": "location",
+                        "in": "query",
+                        "description": "Location of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "south": {
+                                "summary": "car location",
+                                "value": "south"
+                            }
+                        }
+                    },
+                    {
+                        "name": "condition",
+                        "in": "query",
+                        "description": "Condition of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "baru": {
+                                "summary": "car condition (baru, bekas)",
+                                "value": "baru"
+                            }
+                        }
+                    },
+                    {
+                        "name": "min_price",
+                        "in": "query",
+                        "description": "min_price of car",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "100000": {
+                                "summary": "car min_price",
+                                "value": "100000"
+                            }
+                        }
+                    },
+                    {
+                        "name": "max_price",
+                        "in": "query",
+                        "description": "max_price of car",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "100000": {
+                                "summary": "car max_price",
+                                "value": "100000"
+                            }
+                        }
+                    },
+                    {
+                        "name": "min_km",
+                        "in": "query",
+                        "description": "min_km of car",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "769": {
+                                "summary": "car min_km",
+                                "value": "769"
+                            }
+                        }
+                    },
+                    {
+                        "name": "max_km",
+                        "in": "query",
+                        "description": "max_km of car",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "769": {
+                                "summary": "car max_km",
+                                "value": "769"
+                            }
+                        }
+                    },
+                    {
+                        "name": "brand_name",
+                        "in": "query",
+                        "description": "brand_name of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "gtr": {
+                                "summary": "car brand_name",
+                                "value": "gtr"
+                            }
+                        }
+                    },
+                    {
+                        "name": "type_name",
+                        "in": "query",
+                        "description": "type_name of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "bensin": {
+                                "summary": "car type_name",
+                                "value": "bensin"
+                            }
+                        }
+                    },
+                    {
+                        "name": "user_name",
+                        "in": "query",
+                        "description": "user_name of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "john": {
+                                "summary": "car user_name",
+                                "value": "john"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful get data cars",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cars/based-on-profile/{id}": {
+            "get": {
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get all cars based on profile id",
+                "description": "Get all cars based on profile id",
+                "operationId": "getCarsBasedOnProfile",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Parameter id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "int": {
+                                "summary": "Parameter id.",
+                                "value": "1"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful get data cars",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/cars/{id}": {
             "get": {
                 "tags": [
@@ -892,6 +1187,9 @@
                                     "name": {
                                         "type": "string"
                                     },
+                                    "color": {
+                                        "type": "string"
+                                    },
                                     "description": {
                                         "type": "string"
                                     },
@@ -899,6 +1197,9 @@
                                         "type": "integer"
                                     },
                                     "transmission": {
+                                        "type": "string"
+                                    },
+                                    "location": {
                                         "type": "string"
                                     },
                                     "condition": {
@@ -948,6 +1249,13 @@
                                                         "example": "The name field is required"
                                                     }
                                                 },
+                                                "color": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The color field is required"
+                                                    }
+                                                },
                                                 "description": {
                                                     "type": "array",
                                                     "items": {
@@ -967,6 +1275,13 @@
                                                     "items": {
                                                         "type": "string",
                                                         "example": "The transmission field is required"
+                                                    }
+                                                },
+                                                "location": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The location field is required"
                                                     }
                                                 },
                                                 "condition": {
@@ -1182,6 +1497,63 @@
                                         "status": {
                                             "type": "integer",
                                             "example": "201"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/user/{status}": {
+            "get": {
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Get all ordered cars based on payment_status",
+                "description": "Get all ordered cars based on payment_status",
+                "operationId": "getOrderedCarsBasedOnPaymentStatus",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "path",
+                        "description": "Parameter payment_status",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "pending": {
+                                "summary": "Parameter payment status (complete|pending|error|closed)",
+                                "value": "pending"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful get data ordered cars",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
                                         },
                                         "message": {
                                             "type": "string",
@@ -2588,6 +2960,46 @@
                                         "status": {
                                             "type": "integer",
                                             "example": "201"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/wishlists/user": {
+            "get": {
+                "tags": [
+                    "wishlists"
+                ],
+                "summary": "Get all wishlists cars based on current user",
+                "description": "Get all wishlists cars based on current user",
+                "operationId": "getWishlistCar",
+                "responses": {
+                    "200": {
+                        "description": "Successful get data wishlists cars",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
                                         },
                                         "message": {
                                             "type": "string",

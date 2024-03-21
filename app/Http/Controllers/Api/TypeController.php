@@ -158,7 +158,7 @@ class TypeController extends Controller
   public function store(Request $request)
   {
     $validator = Validator::make($request->only(['name', 'description']), [
-      'name' => 'required',
+      'name' => 'required|in:bensin,listrik,hybrid',
       'description' => 'required',
     ]);
 
