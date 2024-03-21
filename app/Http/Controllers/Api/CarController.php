@@ -241,6 +241,7 @@ class CarController extends Controller
    *     tags={"cars"},
    *     description="Get all cars based on current logged seller",
    *     operationId="getCarsBasedOnSeller",
+   *     security={{ "bearerAuth": {} }},
    *     @OA\Parameter(
    *         description="Name of car",
    *         in="query",
@@ -533,7 +534,7 @@ class CarController extends Controller
    *     )
    * )
    */
-  public function show(int $car_id)
+  public function show($car_id)
   {
     $car = DB::table('cars as c')
       ->join('brands as b', 'b.id', 'c.brand_id')
