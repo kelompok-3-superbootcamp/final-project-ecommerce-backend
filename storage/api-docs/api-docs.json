@@ -1051,6 +1051,58 @@
                 }
             }
         },
+        "/api/cars/based-on-profile/{id}": {
+            "get": {
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get all cars based on profile id",
+                "description": "Get all cars based on profile id",
+                "operationId": "getCarsBasedOnProfile",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Parameter id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "int": {
+                                "summary": "Parameter id.",
+                                "value": "1"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful get data cars",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/cars/{id}": {
             "get": {
                 "tags": [

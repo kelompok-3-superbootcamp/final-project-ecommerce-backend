@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Car;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class CarController extends Controller
 
   public function __construct()
   {
-    $this->middleware('auth')->except(['index', 'show']);
+    $this->middleware('auth')->except(['index', 'show', 'basedOnProfile']);
   }
 
   /**
@@ -436,6 +437,65 @@ class CarController extends Controller
   }
 
   /**
+   * Get all cars based on profile id
+   *
+   * @OA\Get(
+   *     path="/api/cars/based-on-profile/{id}",
+   *     tags={"cars"},
+   *     description="Get all cars based on profile id",
+   *     operationId="getCarsBasedOnProfile",
+   *     @OA\Parameter(
+   *         description="Parameter id",
+   *         in="path",
+   *         name="id",
+   *         required=true,
+   *         @OA\Schema(type="integer"),
+   *         @OA\Examples(example="int", value="1", summary="Parameter id."),
+   *     ),
+   *     @OA\Response(
+   *         response="200",
+   *         description="Successful get data cars",
+   *         @OA\JsonContent(
+   *             @OA\Property(
+   *                 property="status",
+   *                 type="integer",
+   *                 example="200",
+   *             ),
+   *             @OA\Property(
+   *                 property="message",
+   *                 type="string",
+   *                 example="ok",
+   *             ),
+   *             @OA\Property(
+   *                 property="data",
+   *                 type="object",
+   *             ),
+   *         )
+   *     )
+   * )
+   */
+  public function basedOnProfile(User $profile)
+  {
+    $cars = DB::table('cars as c')
+      ->where('c.user_id', $profile->id)
+      ->select(
+        'c.id',
+        'c.name',
+        'c.description',
+        'c.price',
+        'c.transmission',
+        'c.condition',
+        'c.image',
+        'c.created_at',
+        'c.updated_at',
+      )->get();
+
+    $profile['cars'] = $cars;
+
+    return ApiHelper::sendResponse(data: $profile);
+  }
+
+  /**
    * Get a car
    *
    * @OA\Get(
@@ -473,8 +533,31 @@ class CarController extends Controller
    *     )
    * )
    */
-  public function show(Car $car)
+  public function show(int $car_id)
   {
+    $car = DB::table('cars as c')
+      ->join('brands as b', 'b.id', 'c.brand_id')
+      ->join('types as t', 't.id', 'c.type_id')
+      ->where('c.id', $car_id)
+      ->select(
+        'c.id',
+        'c.name',
+        'c.color',
+        'c.description',
+        'c.price',
+        'c.transmission',
+        'c.location',
+        'c.condition',
+        'c.year',
+        'c.km',
+        'c.stock',
+        'c.image',
+        't.name as type_name',
+        'b.name as brand_name',
+        'c.created_at',
+        'c.updated_at',
+      )->first();
+
     return ApiHelper::sendResponse(data: $car);
   }
 
