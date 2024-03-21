@@ -119,6 +119,59 @@ class OrderController extends Controller
   }
 
   /**
+   * Get all ordered cars based on current seller
+   *
+   * @OA\Get(
+   *     path="/api/orders/seller",
+   *     tags={"orders"},
+   *     description="Get all ordered cars based on current seller",
+   *     operationId="getOrderedCarsBasedOnSeller",
+   *     security={{ "bearerAuth": {} }},
+   *     @OA\Response(
+   *         response="200",
+   *         description="Successful get data ordered cars",
+   *         @OA\JsonContent(
+   *             @OA\Property(
+   *                 property="status",
+   *                 type="integer",
+   *                 example="200",
+   *             ),
+   *             @OA\Property(
+   *                 property="message",
+   *                 type="string",
+   *                 example="ok",
+   *             ),
+   *             @OA\Property(
+   *                 property="data",
+   *                 type="object",
+   *             ),
+   *         )
+   *     )
+   * )
+   */
+  public function sellerOrderLists()
+  {
+    $orders = DB::table('orders as o')
+      ->join('cars as c', 'c.id', 'o.car_id')
+      ->join('users as u', 'u.id', 'o.user_id')
+      ->where('u.id', auth()->user()->id)
+      ->select(
+        'c.id',
+        'o.payment_status',
+        'c.name',
+        'c.description',
+        'c.price',
+        'c.transmission',
+        'c.condition',
+        'c.image',
+        'c.created_at',
+        'c.updated_at',
+      )->get();
+
+    return ApiHelper::sendResponse(data: $orders);
+  }
+
+  /**
    * Get order detail
    *
    * @OA\Get(
@@ -385,31 +438,37 @@ class OrderController extends Controller
       \Midtrans\Config::$isSanitized = config('services.midtrans.isSanitized');
       \Midtrans\Config::$is3ds = config('services.midtrans.is3ds');
 
-      // Create Midtrans Params
-      $midtransParams = [
-        'transaction_details' => [
-          'order_id' => $order->id,
-          'gross_amount' => (int) $order->total_price,
-        ],
-        'customer_details' => [
-          'first_name' => auth()->user()->id,
-          'email' => auth()->user()->email,
-        ],
-        'enabled_payments' => ['gopay', 'bank_transfer'],
-        'vtweb' => []
-      ];
+      try {
+        DB::transaction(function () use ($order) {
+          // Create Midtrans Params
+          $midtransParams = [
+            'transaction_details' => [
+              'order_id' => $order->id,
+              'gross_amount' => (int) $order->total_price,
+            ],
+            'customer_details' => [
+              'first_name' => auth()->user()->id,
+              'email' => auth()->user()->email,
+            ],
+            'enabled_payments' => ['gopay', 'bank_transfer'],
+            'vtweb' => []
+          ];
 
-      // Get Snap Payment Page URL
-      $paymentUrl = \Midtrans\Snap::createTransaction($midtransParams)->redirect_url;
-
-      // Save payment URL to booking
-      $order->payment_url = $paymentUrl;
-      // Decrement stock
-      DB::table('cars')->where('id', $order->car_id)->decrement('stock');
-      $order->save();
+          // Get Snap Payment Page URL
+          $paymentUrl = \Midtrans\Snap::createTransaction($midtransParams)->redirect_url;
 
 
-      return ApiHelper::sendResponse(201, data: $order);
+          $order->payment_url = $paymentUrl;
+          // Decrement stock
+          DB::table('cars')->where('id', $order->car_id)->decrement('stock');
+          $order->save();
+
+
+          return ApiHelper::sendResponse(201, data: $order);
+        });
+      } catch (Exception $e) {
+        return ApiHelper::sendResponse(500, $e->getMessage());
+      }
     }
   }
 

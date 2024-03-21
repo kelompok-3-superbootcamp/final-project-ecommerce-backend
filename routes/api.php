@@ -1,5 +1,6 @@
 <?php
 
+use App\Helper\ApiHelper;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CarController;
@@ -64,6 +65,7 @@ Route::controller(CarController::class)->prefix('cars')->group(function () {
 
 Route::controller(OrderController::class)->prefix('orders')->group(function () {
   Route::get('/', 'index');
+  Route::get('/seller', 'sellerOrderLists');
   Route::get('/{order}', 'show');
   Route::post('/', 'store');
   Route::put('/{order}', 'update');
