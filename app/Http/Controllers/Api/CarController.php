@@ -61,7 +61,7 @@ class CarController extends Controller
    *         in="query",
    *         name="condition",
    *         @OA\Schema(type="string"),
-   *         @OA\Examples(example="baru", value="baru", summary="car condition (baru, second)"),
+   *         @OA\Examples(example="baru", value="baru", summary="car condition (baru, bekas)"),
    *     ),
    *     @OA\Parameter(
    *         description="min_price of car",
@@ -274,7 +274,7 @@ class CarController extends Controller
    *         in="query",
    *         name="condition",
    *         @OA\Schema(type="string"),
-   *         @OA\Examples(example="baru", value="baru", summary="car condition (baru, second)"),
+   *         @OA\Examples(example="baru", value="baru", summary="car condition (baru, bekas)"),
    *     ),
    *     @OA\Parameter(
    *         description="min_price of car",

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Wishlist;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class WishlistController extends Controller
@@ -15,6 +16,7 @@ class WishlistController extends Controller
   {
     $this->middleware('auth')->except(['index', 'show']);
   }
+
   /**
    * Get all wishlists
    *
@@ -48,8 +50,22 @@ class WishlistController extends Controller
    */
   public function index()
   {
-    $wishlists = Wishlist::where('user_id', auth()->user()->id)->get();
-    return ApiHelper::sendResponse(data: $wishlists);
+    $wishlistCars = DB::table('wishlists as w')
+      ->join('cars as c', 'c.id', 'w.car_id')
+      ->where('w.user_id', auth()->user()->id)
+      ->select(
+        'c.id',
+        'c.name',
+        'c.description',
+        'c.price',
+        'c.transmission',
+        'c.condition',
+        'c.image',
+        'c.created_at',
+        'c.updated_at',
+      )->get();
+
+    return ApiHelper::sendResponse(data: $wishlistCars);
   }
 
   /**
@@ -123,30 +139,6 @@ class WishlistController extends Controller
     } catch (Exception $e) {
       return ApiHelper::sendResponse(500, $e->getMessage());
     }
-  }
-
-  /**
-   * Display the specified resource.
-   */
-  public function show(Wishlist $wishlist)
-  {
-    //
-  }
-
-  /**
-   * Show the form for editing the specified resource.
-   */
-  public function edit(Wishlist $wishlist)
-  {
-    //
-  }
-
-  /**
-   * Update the specified resource in storage.
-   */
-  public function update(Request $request, Wishlist $wishlist)
-  {
-    //
   }
 
   /**
