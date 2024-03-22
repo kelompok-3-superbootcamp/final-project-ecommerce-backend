@@ -2007,6 +2007,110 @@
                 ]
             }
         },
+        "/api/reviews/avarage/{car_id}": {
+            "get": {
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get avarage star count",
+                "description": "Get avarage star count",
+                "operationId": "avarageRatingCar_reviews",
+                "parameters": [
+                    {
+                        "name": "car_id",
+                        "in": "path",
+                        "description": "Parameter id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "int": {
+                                "summary": "Parameter id.",
+                                "value": "1"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful get data avg reviews",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reviews/car/{car_id}": {
+            "get": {
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get car review",
+                "description": "Get car review",
+                "operationId": "getCar_reviews",
+                "parameters": [
+                    {
+                        "name": "car_id",
+                        "in": "path",
+                        "description": "Parameter id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "int": {
+                                "summary": "Parameter id.",
+                                "value": "1"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful get data car reviews",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/reviews/{id}": {
             "get": {
                 "tags": [
