@@ -464,7 +464,7 @@ class OrderController extends Controller
           $order->save();
 
 
-          return ApiHelper::sendResponse(201, data: $order);
+          return ApiHelper::sendResponse(201, data: $paymentUrl);
         });
       } catch (Exception $e) {
         return ApiHelper::sendResponse(500, $e->getMessage());
