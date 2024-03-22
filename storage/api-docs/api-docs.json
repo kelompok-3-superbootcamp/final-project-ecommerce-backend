@@ -626,6 +626,20 @@
                                 "value": "john"
                             }
                         }
+                    },
+                    {
+                        "name": "order_by",
+                        "in": "query",
+                        "description": "order_by of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "car order_by (asc|desc)",
+                                "value": "asc"
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -1020,6 +1034,20 @@
                             "john": {
                                 "summary": "car user_name",
                                 "value": "john"
+                            }
+                        }
+                    },
+                    {
+                        "name": "order_by",
+                        "in": "query",
+                        "description": "order_by of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "car order_by (asc|desc)",
+                                "value": "asc"
                             }
                         }
                     }

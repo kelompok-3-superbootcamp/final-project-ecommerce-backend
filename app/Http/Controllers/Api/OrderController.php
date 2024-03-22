@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enum\PaymentStatus;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\IsAdmin;
 use App\Models\Car;
 use App\Models\Order;
 use Carbon\Carbon;
@@ -19,6 +20,7 @@ class OrderController extends Controller
   public function __construct()
   {
     $this->middleware('auth')->except(['index', 'show']);
+    $this->middleware(IsAdmin::class)->only(['update', 'destroy'])
   }
 
   /**

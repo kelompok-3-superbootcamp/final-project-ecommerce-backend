@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enum\DiscountType;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\IsAdmin;
 use App\Models\Voucher;
 use App\Rules\DiscountValueValidation;
 use Exception;
@@ -16,7 +17,7 @@ class VoucherController extends Controller
 {
   public function __construct()
   {
-    $this->middleware('auth')->except(['index']);
+    $this->middleware(['auth', IsAdmin::class])->except(['index', 'show']);
   }
 
   /**
