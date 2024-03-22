@@ -19,13 +19,13 @@ class BrandSeeder extends Seeder
     $timestamps = clone $date;
 
     $brands = [
-      ['name' => 'Daihatsu', 'logo_url' => 'test.com', 'created_at' => $timestamps, 'updated_at' => $timestamps],
-      ['name' => 'Toyota', 'logo_url' => 'test.com', 'created_at' => $timestamps, 'updated_at' => $timestamps],
-      ['name' => 'Wuling', 'logo_url' => 'test.com', 'created_at' => $timestamps, 'updated_at' => $timestamps],
-      ['name' => 'Isuzu', 'logo_url' => 'test.com', 'created_at' => $timestamps, 'updated_at' => $timestamps],
-      ['name' => 'Kia', 'logo_url' => 'test.com', 'created_at' => $timestamps, 'updated_at' => $timestamps],
-      ['name' => 'Suzuki', 'logo_url' => 'test.com', 'created_at' => $timestamps, 'updated_at' => $timestamps],
-      ['name' => 'Hyundai', 'logo_url' => 'test.com', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+      ['name' => 'Daihatsu', 'logo_url' => 'https://via.placeholder.com/200x200', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+      ['name' => 'Toyota', 'logo_url' => 'https://via.placeholder.com/200x200', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+      ['name' => 'Wuling', 'logo_url' => 'https://via.placeholder.com/200x200', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+      ['name' => 'Isuzu', 'logo_url' => 'https://via.placeholder.com/200x200', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+      ['name' => 'Kia', 'logo_url' => 'https://via.placeholder.com/200x200', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+      ['name' => 'Suzuki', 'logo_url' => 'https://via.placeholder.com/200x200', 'created_at' => $timestamps, 'updated_at' => $timestamps],
+      ['name' => 'Hyundai', 'logo_url' => 'https://via.placeholder.com/200x200', 'created_at' => $timestamps, 'updated_at' => $timestamps],
     ];
 
     DB::table('brands')->insert($brands);

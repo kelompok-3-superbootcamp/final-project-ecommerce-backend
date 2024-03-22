@@ -230,7 +230,7 @@ class CarController extends Controller
       'c.created_at',
       'c.updated_at',
       DB::raw('IF(w.car_id IS NOT NULL, 1, 0) as isWishList')
-    )->get());
+    )->paginate(10));
   }
 
   /**
