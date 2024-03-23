@@ -17,7 +17,7 @@ return new class extends Migration
       $table->string('payment_method');
       $table->string('payment_status');
       $table->string('payment_url');
-      $table->integer('total_price');
+      $table->bigInteger('total_price')->unsigned();
       $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
       $table->foreignId('car_id')->constrained('cars')->cascadeOnDelete();
       $table->timestamps();
