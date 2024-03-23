@@ -640,6 +640,20 @@
                                 "value": "asc"
                             }
                         }
+                    },
+                    {
+                        "name": "price_range",
+                        "in": "query",
+                        "description": "price_range of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "car price_range (termurah|termahal)",
+                                "value": "termurah"
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -1048,6 +1062,20 @@
                             "string": {
                                 "summary": "car order_by (asc|desc)",
                                 "value": "asc"
+                            }
+                        }
+                    },
+                    {
+                        "name": "price_range",
+                        "in": "query",
+                        "description": "price_range of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "car price_range (termurah|termahal)",
+                                "value": "termurah"
                             }
                         }
                     }
@@ -1735,22 +1763,10 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "date": {
-                                        "type": "string"
-                                    },
-                                    "payment_method": {
-                                        "type": "string"
-                                    },
-                                    "payment_status": {
-                                        "type": "string"
-                                    },
                                     "payment_url": {
                                         "type": "string"
                                     },
-                                    "total_price": {
-                                        "type": "integer"
-                                    },
-                                    "car_id": {
+                                    "voucher_id": {
                                         "type": "integer"
                                     }
                                 },
