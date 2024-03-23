@@ -76,6 +76,7 @@ Route::controller(OrderController::class)->prefix('orders')->group(function () {
 
 Route::controller(VoucherController::class)->prefix('vouchers')->group(function () {
   Route::get('/', 'index');
+  Route::post('/verify', 'verifyVoucherCode');
   Route::get('/{voucher}', 'show');
   Route::post('/', 'store');
   Route::put('/{voucher}', 'update');

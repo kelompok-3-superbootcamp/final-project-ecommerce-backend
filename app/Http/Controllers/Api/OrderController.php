@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enum\DiscountType;
 use App\Enum\PaymentStatus;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
@@ -410,6 +411,12 @@ class OrderController extends Controller
    *         @OA\Schema(type="integer"),
    *         @OA\Examples(example="int", value="1", summary="Parameter id."),
    *     ),
+   *     @OA\RequestBody(
+   *         @OA\JsonContent(
+   *             type="object",
+   *             @OA\Property(property="voucher_id", type="string"),
+   *         )
+   *     ),
    *     @OA\Response(
    *         response="200",
    *         description="Successful checkout order",
@@ -432,7 +439,7 @@ class OrderController extends Controller
    *     )
    * )
    */
-  public function checkout(Order $order)
+  public function checkout(Order $order, Request $request)
   {
     if ($order->payment_method == 'midtrans') {
       // Call Midtrans API
@@ -442,6 +449,23 @@ class OrderController extends Controller
       \Midtrans\Config::$is3ds = config('services.midtrans.is3ds');
 
       try {
+        if ($request->voucher_id) {
+          $voucher = DB::table('vouchers')
+            ->where('id', $request->voucher_id)
+            ->first();
+
+          switch ($voucher->discount_type) {
+            case DiscountType::PERCENTAGE:
+              $order->total_price = $order->total_price - ($order->total_price * $voucher->discount_value / 100);
+              break;
+            case DiscountType::NOMINAL:
+              $order->total_price = $order->total_price - $voucher->discount_value;
+              break;
+            default:
+              break;
+          }
+        }
+
         // Create Midtrans Params
         $midtransParams = [
           'transaction_details' => [
