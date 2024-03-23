@@ -626,6 +626,34 @@
                                 "value": "john"
                             }
                         }
+                    },
+                    {
+                        "name": "order_by",
+                        "in": "query",
+                        "description": "order_by of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "car order_by (asc|desc)",
+                                "value": "asc"
+                            }
+                        }
+                    },
+                    {
+                        "name": "price_range",
+                        "in": "query",
+                        "description": "price_range of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "car price_range (termurah|termahal)",
+                                "value": "termurah"
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -1020,6 +1048,34 @@
                             "john": {
                                 "summary": "car user_name",
                                 "value": "john"
+                            }
+                        }
+                    },
+                    {
+                        "name": "order_by",
+                        "in": "query",
+                        "description": "order_by of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "car order_by (asc|desc)",
+                                "value": "asc"
+                            }
+                        }
+                    },
+                    {
+                        "name": "price_range",
+                        "in": "query",
+                        "description": "price_range of car",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "car price_range (termurah|termahal)",
+                                "value": "termurah"
                             }
                         }
                     }
@@ -1707,22 +1763,10 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "date": {
-                                        "type": "string"
-                                    },
-                                    "payment_method": {
-                                        "type": "string"
-                                    },
-                                    "payment_status": {
-                                        "type": "string"
-                                    },
                                     "payment_url": {
                                         "type": "string"
                                     },
-                                    "total_price": {
-                                        "type": "integer"
-                                    },
-                                    "car_id": {
+                                    "voucher_id": {
                                         "type": "integer"
                                     }
                                 },
@@ -2005,6 +2049,110 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/reviews/avarage/{car_id}": {
+            "get": {
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get avarage star count",
+                "description": "Get avarage star count",
+                "operationId": "avarageRatingCar_reviews",
+                "parameters": [
+                    {
+                        "name": "car_id",
+                        "in": "path",
+                        "description": "Parameter id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "int": {
+                                "summary": "Parameter id.",
+                                "value": "1"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful get data avg reviews",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reviews/car/{car_id}": {
+            "get": {
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get car review",
+                "description": "Get car review",
+                "operationId": "getCar_reviews",
+                "parameters": [
+                    {
+                        "name": "car_id",
+                        "in": "path",
+                        "description": "Parameter id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "examples": {
+                            "int": {
+                                "summary": "Parameter id.",
+                                "value": "1"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful get data car reviews",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/reviews/{id}": {

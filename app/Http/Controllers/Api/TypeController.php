@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\IsAdmin;
 use App\Models\Type;
 use Exception;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class TypeController extends Controller
 {
   public function __construct()
   {
-    $this->middleware('auth')->except(['index', 'show']);
+    $this->middleware(['auth', IsAdmin::class])->except(['index', 'show']);
   }
 
   /**

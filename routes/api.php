@@ -1,6 +1,5 @@
 <?php
 
-use App\Helper\ApiHelper;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CarController;
@@ -96,6 +95,9 @@ Route::controller(ReviewController::class)->prefix('reviews')->group(function ()
   Route::post('/', 'store');
   Route::put('/{review}', 'update');
   Route::delete('/{review}', 'destroy');
+
+  Route::get('/avarage/{car_id}', 'avarageRatingCar');
+  Route::get('/car/{car_id}', 'carReviews');
 });
 
 Route::post('/midtrans/callback', [MidtransCallbackController::class, 'callback']);

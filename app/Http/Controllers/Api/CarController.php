@@ -112,6 +112,20 @@ class CarController extends Controller
    *         @OA\Schema(type="string"),
    *         @OA\Examples(example="john", value="john", summary="car user_name"),
    *     ),
+   *     @OA\Parameter(
+   *         description="order_by of car",
+   *         in="query",
+   *         name="order_by",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="string", value="asc", summary="car order_by (asc|desc)"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="price_range of car",
+   *         in="query",
+   *         name="price_range",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="string", value="termurah", summary="car price_range (termurah|termahal)"),
+   *     ),
    *     @OA\Response(
    *         response="200",
    *         description="Successful get data cars",
@@ -150,6 +164,8 @@ class CarController extends Controller
     $brandName = $request->query('brand_name'); // Mendapatkan nama merek dari permintaan
     $typeName = $request->query('type_name'); // Mendapatkan nama tipe dari permintaan
     $userName = $request->query('user_name'); // Mendapatkan nama user dari permintaan
+    $order = $request->query('order_by'); // Mendapatkan nama user dari permintaan
+    $priceRange = $request->query('price_range'); // Mendapatkan nama user dari permintaan
 
     $cars = DB::table('cars as c')
       ->join('brands as b', 'b.id', 'c.brand_id')
@@ -211,6 +227,12 @@ class CarController extends Controller
       return $query->where('u.name', 'like', '%' . $userName . '%');
     });
 
+    $cars->when($priceRange, function (Builder $query) use ($priceRange) {
+      $range = $priceRange === 'termurah' ? 'asc' : ($priceRange === 'termahal' ? 'desc' : 'asc');
+
+      return $query->orderBy('c.price', $range);
+    });
+
     return ApiHelper::sendResponse(data: $cars->select(
       'c.id',
       'c.name',
@@ -230,7 +252,7 @@ class CarController extends Controller
       'c.created_at',
       'c.updated_at',
       DB::raw('IF(w.car_id IS NOT NULL, 1, 0) as isWishList')
-    )->paginate(10));
+    )->orderBy('c.created_at', $order ?? 'asc')->paginate(10));
   }
 
   /**
@@ -326,6 +348,20 @@ class CarController extends Controller
    *         @OA\Schema(type="string"),
    *         @OA\Examples(example="john", value="john", summary="car user_name"),
    *     ),
+   *     @OA\Parameter(
+   *         description="order_by of car",
+   *         in="query",
+   *         name="order_by",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="string", value="asc", summary="car order_by (asc|desc)"),
+   *     ),
+   *     @OA\Parameter(
+   *         description="price_range of car",
+   *         in="query",
+   *         name="price_range",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="string", value="termurah", summary="car price_range (termurah|termahal)"),
+   *     ),
    *     @OA\Response(
    *         response="200",
    *         description="Successful get data cars",
@@ -362,6 +398,8 @@ class CarController extends Controller
     $maxYear = $request->query('max_year'); // Mendapatkan jarak maksimum dari permintaan
     $brandName = $request->query('brand_name'); // Mendapatkan nama merek dari permintaan
     $typeName = $request->query('type_name'); // Mendapatkan nama tipe dari permintaan
+    $order = $request->query('order_by'); // Mendapatkan nama tipe dari permintaan
+    $priceRange = $request->query('price_range'); // Mendapatkan nama user dari permintaan
 
     $cars = DB::table('cars as c')
       ->join('brands as b', 'b.id', 'c.brand_id')
@@ -417,6 +455,12 @@ class CarController extends Controller
       return $query->where('t.name', 'like', '%' . $typeName . '%');
     });
 
+    $cars->when($priceRange, function (Builder $query) use ($priceRange) {
+      $range = $priceRange === 'termurah' ? 'asc' : ($priceRange === 'termahal' ? 'desc' : 'asc');
+
+      return $query->orderBy('c.price', $range);
+    });
+
     return ApiHelper::sendResponse(data: $cars->where('c.user_id', auth()->user()->id)->select(
       'c.id',
       'c.name',
@@ -434,7 +478,7 @@ class CarController extends Controller
       'b.name as brand_name',
       'c.created_at',
       'c.updated_at',
-    )->get());
+    )->orderBy('c.created_at', $order ?? 'asc')->get());
   }
 
   /**
@@ -800,7 +844,11 @@ class CarController extends Controller
     try {
       $data = $validator->validated();
       $data['user_id'] = auth()->user()->id;
-      $updatedCar = $car->update($data);
+
+      $updatedCar = DB::table('cars')
+        ->where('user_id', auth()->user()->id)
+        ->where('id', $car->id)
+        ->update($data);
 
       return ApiHelper::sendResponse(201, data: $updatedCar);
     } catch (Exception $e) {
@@ -850,8 +898,19 @@ class CarController extends Controller
    */
   public function destroy(Car $car)
   {
+    if (auth()->user()->role !== 'user' && auth()->user()->role !== 'admin') {
+      return ApiHelper::sendResponse(403, 'Permission denied');
+    }
+
     try {
-      $car->delete();
+      DB::table('cars')
+        ->when(auth()->user()->role === 'user', function (Builder $query) use ($car) {
+          return $query->where('user_id', auth()->user()->id)->where('id', $car->id);
+        })
+        ->when(auth()->user()->role === 'admin', function (Builder $query) use ($car) {
+          return $query->where('id', $car->id);
+        })
+        ->delete();
 
       return ApiHelper::sendResponse(200);
     } catch (Exception $e) {
