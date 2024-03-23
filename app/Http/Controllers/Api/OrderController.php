@@ -20,7 +20,7 @@ class OrderController extends Controller
   public function __construct()
   {
     $this->middleware('auth')->except(['index', 'show']);
-    $this->middleware(IsAdmin::class)->only(['update', 'destroy'])
+    $this->middleware(IsAdmin::class)->only(['update', 'destroy']);
   }
 
   /**
