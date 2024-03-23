@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enum\DiscountType;
 use App\Enum\PaymentStatus;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
@@ -20,7 +21,7 @@ class OrderController extends Controller
   public function __construct()
   {
     $this->middleware('auth')->except(['index', 'show']);
-    $this->middleware(IsAdmin::class)->only(['update', 'destroy']);
+    $this->middleware(IsAdmin::class)->only(['destroy']);
   }
 
   /**
@@ -317,12 +318,8 @@ class OrderController extends Controller
    *         required=true,
    *         @OA\JsonContent(
    *             type="object",
-   *             @OA\Property(property="date", type="string"),
-   *             @OA\Property(property="payment_method", type="string"),
-   *             @OA\Property(property="payment_status", type="string"),
    *             @OA\Property(property="payment_url", type="string"),
-   *             @OA\Property(property="total_price", type="integer"),
-   *             @OA\Property(property="car_id", type="integer"),
+   *             @OA\Property(property="voucher_id", type="integer"),
    *         )
    *     ),
    *     @OA\Response(
@@ -354,19 +351,11 @@ class OrderController extends Controller
   public function update(Request $request, Order $order)
   {
     $validator = Validator::make($request->only([
-      'date',
-      'payment_method',
       'payment_status',
-      'payment_url',
-      'total_price',
-      'car_id',
+      'voucher_id',
     ]), [
-      'date' => 'sometimes|required|date_format:Y-m-d H:i:s',
-      'payment_method' => 'sometimes|required',
       'payment_status' => ['sometimes', 'required', new Enum(PaymentStatus::class)],
-      'payment_url' => 'sometimes|required',
-      'total_price' => 'sometimes|required|numeric',
-      'car_id' => 'sometimes|required|exists:cars,id',
+      'voucher_id' => ['sometimes', 'required', 'exists:vouchers,id'],
     ]);
 
     if ($validator->fails()) {
@@ -378,9 +367,22 @@ class OrderController extends Controller
         $data = $validator->validated();
         $data['user_id'] = auth()->user()->id;
 
-        $updatedOrder = $order->update($data);
-
         if ($data['payment_status'] === PaymentStatus::COMPLETE) {
+          if ($data['voucher_id']) {
+            $voucher = DB::table('vouchers')
+              ->where('id', $data['voucher_id'])
+              ->first();
+
+            $isExpired = Carbon::parse($voucher->expired_at)->isPast();
+
+            if ($isExpired) {
+              return ApiHelper::sendResponse(400, 'Voucher expired');
+            }
+
+            $voucher->decrement('quota');
+          }
+
+          $updatedOrder = $order->update($data);
           DB::table('cars')->where('id', $order->car_id)->decrement('stock');
         }
 
@@ -409,6 +411,12 @@ class OrderController extends Controller
    *         @OA\Schema(type="integer"),
    *         @OA\Examples(example="int", value="1", summary="Parameter id."),
    *     ),
+   *     @OA\RequestBody(
+   *         @OA\JsonContent(
+   *             type="object",
+   *             @OA\Property(property="voucher_id", type="string"),
+   *         )
+   *     ),
    *     @OA\Response(
    *         response="200",
    *         description="Successful checkout order",
@@ -431,7 +439,7 @@ class OrderController extends Controller
    *     )
    * )
    */
-  public function checkout(Order $order)
+  public function checkout(Order $order, Request $request)
   {
     if ($order->payment_method == 'midtrans') {
       // Call Midtrans API
@@ -441,33 +449,44 @@ class OrderController extends Controller
       \Midtrans\Config::$is3ds = config('services.midtrans.is3ds');
 
       try {
-        DB::transaction(function () use ($order) {
-          // Create Midtrans Params
-          $midtransParams = [
-            'transaction_details' => [
-              'order_id' => $order->id,
-              'gross_amount' => (int) $order->total_price,
-            ],
-            'customer_details' => [
-              'first_name' => auth()->user()->id,
-              'email' => auth()->user()->email,
-            ],
-            'enabled_payments' => ['gopay', 'bank_transfer'],
-            'vtweb' => []
-          ];
+        if ($request->voucher_id) {
+          $voucher = DB::table('vouchers')
+            ->where('id', $request->voucher_id)
+            ->first();
 
-          // Get Snap Payment Page URL
-          $paymentUrl = \Midtrans\Snap::createTransaction($midtransParams)->redirect_url;
+          switch ($voucher->discount_type) {
+            case DiscountType::PERCENTAGE:
+              $order->total_price = $order->total_price - ($order->total_price * $voucher->discount_value / 100);
+              break;
+            case DiscountType::NOMINAL:
+              $order->total_price = $order->total_price - $voucher->discount_value;
+              break;
+            default:
+              break;
+          }
+        }
 
+        // Create Midtrans Params
+        $midtransParams = [
+          'transaction_details' => [
+            'order_id' => $order->id,
+            'gross_amount' => (int) $order->total_price,
+          ],
+          'customer_details' => [
+            'first_name' => auth()->user()->id,
+            'email' => auth()->user()->email,
+          ],
+          'enabled_payments' => ['gopay', 'bank_transfer'],
+          'vtweb' => []
+        ];
 
-          $order->payment_url = $paymentUrl;
-          // Decrement stock
-          DB::table('cars')->where('id', $order->car_id)->decrement('stock');
-          $order->save();
+        // Get Snap Payment Page URL
+        $paymentUrl = \Midtrans\Snap::createTransaction($midtransParams)->redirect_url;
 
+        $order->payment_url = $paymentUrl;
+        $order->save();
 
-          return ApiHelper::sendResponse(201, data: $paymentUrl);
-        });
+        return ApiHelper::sendResponse(201, data: $paymentUrl);
       } catch (Exception $e) {
         return ApiHelper::sendResponse(500, $e->getMessage());
       }

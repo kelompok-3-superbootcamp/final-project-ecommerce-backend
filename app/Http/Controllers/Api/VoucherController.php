@@ -100,6 +100,58 @@ class VoucherController extends Controller
     return ApiHelper::sendResponse(data: $voucher);
   }
 
+  /**
+   * Verify voucher code
+   *
+   * @OA\Post(
+   *     path="/api/vouchers/verify",
+   *     tags={"vouchers"},
+   *     description="Verify voucher code",
+   *     operationId="verify_vouchers",
+   *     security={{ "bearerAuth": {} }},
+   *     @OA\RequestBody(
+   *         @OA\JsonContent(
+   *             type="object",
+   *             @OA\Property(property="voucher_code", type="string")
+   *         )
+   *     ),
+   *     @OA\Response(
+   *         response="200",
+   *         description="Successful verify voucher code",
+   *         @OA\JsonContent(
+   *             @OA\Property(
+   *                 property="status",
+   *                 type="integer",
+   *                 example="200",
+   *             ),
+   *             @OA\Property(
+   *                 property="message",
+   *                 type="string",
+   *                 example="ok",
+   *             ),
+   *             @OA\Property(
+   *                 property="data",
+   *                 type="object",
+   *             ),
+   *         )
+   *     )
+   * )
+   */
+  public function verifyVoucherCode(Request $request)
+  {
+    $validator = Validator::make($request->only('voucher_code'), [
+      'voucher_code' => 'required|exists:vouchers,voucher_code'
+    ]);
+
+    if ($validator->fails()) {
+      return ApiHelper::sendResponse(400, 'Wrong voucher code, try again');
+    }
+
+    $data = $validator->validated();
+
+    return ApiHelper::sendResponse(data: Voucher::where('voucher_code', $data['voucher_code'])->first());
+  }
+
 
   /**
    * Add a new Vouchers
