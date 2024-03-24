@@ -8,8 +8,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\IsAdmin;
 use App\Models\Voucher;
 use App\Rules\DiscountValueValidation;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Enum;
 
@@ -17,7 +19,7 @@ class VoucherController extends Controller
 {
   public function __construct()
   {
-    $this->middleware(['auth', IsAdmin::class])->except(['index', 'show']);
+    $this->middleware(['auth', IsAdmin::class])->except(['index', 'show', 'verifyVoucherCode']);
   }
 
   /**
@@ -112,7 +114,8 @@ class VoucherController extends Controller
    *     @OA\RequestBody(
    *         @OA\JsonContent(
    *             type="object",
-   *             @OA\Property(property="voucher_code", type="string")
+   *             @OA\Property(property="voucher_code", type="string"),
+   *             @OA\Property(property="order_id", type="string")
    *         )
    *     ),
    *     @OA\Response(
@@ -139,7 +142,8 @@ class VoucherController extends Controller
    */
   public function verifyVoucherCode(Request $request)
   {
-    $validator = Validator::make($request->only('voucher_code'), [
+    $validator = Validator::make($request->only(['voucher_code', 'order_id']), [
+      'order_id' => 'required|exists:orders,id',
       'voucher_code' => 'required|exists:vouchers,voucher_code'
     ]);
 
@@ -147,9 +151,40 @@ class VoucherController extends Controller
       return ApiHelper::sendResponse(400, 'Wrong voucher code, try again');
     }
 
-    $data = $validator->validated();
+    try {
+      $data = $validator->validated();
 
-    return ApiHelper::sendResponse(data: Voucher::where('voucher_code', $data['voucher_code'])->first());
+      $voucher = DB::table('vouchers')
+        ->where('voucher_code', $data['voucher_code'])
+        ->first();
+
+      if (is_null($voucher)) {
+        return ApiHelper::sendResponse(message: 'Voucher not found');
+      }
+
+      $isExpired = Carbon::parse($voucher->expired_at)->isPast();
+      $isRanOut = $voucher->quota === 0;
+
+      if ($isExpired) return ApiHelper::sendResponse(message: 'Voucher expired');
+      if ($isRanOut) return ApiHelper::sendResponse(message: 'Ran out of vouchers');
+
+      $order = DB::table('orders')->find($data['order_id']);
+
+      switch ($voucher->discount_type) {
+        case 'percentage':
+          $order->total_price = $order->total_price - ($order->total_price * $voucher->discount_value / 100);
+          break;
+        case 'nominal':
+          $order->total_price = $order->total_price - $voucher->discount_value;
+          break;
+        default:
+          break;
+      }
+
+      return ApiHelper::sendResponse(data: ['voucher' => $voucher, 'total_price' => $order->total_price]);
+    } catch (Exception $e) {
+      return ApiHelper::sendResponse(500, $e->getMessage());
+    }
   }
 
 
