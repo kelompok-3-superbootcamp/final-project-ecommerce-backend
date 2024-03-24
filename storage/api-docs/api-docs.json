@@ -3075,6 +3075,9 @@
                                 "properties": {
                                     "voucher_code": {
                                         "type": "string"
+                                    },
+                                    "order_id": {
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
