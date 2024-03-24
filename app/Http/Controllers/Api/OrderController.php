@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -454,22 +455,34 @@ class OrderController extends Controller
             ->where('id', $request->voucher_id)
             ->first();
 
+          if (is_null($voucher)) {
+            return ApiHelper::sendResponse(message: 'Voucher not found');
+          }
+
+          $isExpired = Carbon::parse($voucher->expired_at)->isPast();
+          $isRanOut = $voucher->quota === 0;
+
+          if ($isExpired) return ApiHelper::sendResponse(message: 'Voucher expired');
+          if ($isRanOut) return ApiHelper::sendResponse(message: 'Ran out of vouchers');
+
           switch ($voucher->discount_type) {
-            case DiscountType::PERCENTAGE:
+            case 'percentage':
               $order->total_price = $order->total_price - ($order->total_price * $voucher->discount_value / 100);
               break;
-            case DiscountType::NOMINAL:
+            case 'nominal':
               $order->total_price = $order->total_price - $voucher->discount_value;
               break;
             default:
               break;
           }
+
+          DB::table('vouchers')->where('id', $voucher->id)->decrement('quota');
         }
 
         // Create Midtrans Params
         $midtransParams = [
           'transaction_details' => [
-            'order_id' => $order->id,
+            'order_id' => Str::random(5) . "-" . $order->id,
             'gross_amount' => (int) $order->total_price,
           ],
           'customer_details' => [
