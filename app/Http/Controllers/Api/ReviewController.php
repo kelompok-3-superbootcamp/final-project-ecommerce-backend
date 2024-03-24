@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Review;
+use App\Models\Car;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -51,6 +52,45 @@ class ReviewController extends Controller
   public function index()
   {
     return ApiHelper::sendResponse(data: Review::all());
+  }
+
+  /**
+   * Get all reviews
+   *
+   * @OA\Get(
+   *     path="/api/reviews/for-seller",
+   *     tags={"reviews"},
+   *     description="Get all reviews",
+   *     security={{ "bearerAuth": {} }},
+   *     operationId="index_reviews_based_on_seller",
+   *     @OA\Response(
+   *         response="200",
+   *         description="Successful get data reviews",
+   *         @OA\JsonContent(
+   *             @OA\Property(
+   *                 property="status",
+   *                 type="integer",
+   *                 example="200",
+   *             ),
+   *             @OA\Property(
+   *                 property="message",
+   *                 type="string",
+   *                 example="ok",
+   *             ),
+   *             @OA\Property(
+   *                 property="data",
+   *                 type="object",
+   *             ),
+   *         )
+   *     )
+   * )
+   */
+  public function forSeller()
+  {
+    $user = auth()->user();
+    $cars = Car::where('user_id', $user->id)->pluck('id');
+    $reviews = Review::whereIn('car_id', $cars)->get();
+    return ApiHelper::sendResponse(data: $reviews);
   }
 
   /**

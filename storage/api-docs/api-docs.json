@@ -636,8 +636,8 @@
                         },
                         "examples": {
                             "string": {
-                                "summary": "car order_by (asc|desc)",
-                                "value": "asc"
+                                "summary": "car order_by (terlama|terbaru)",
+                                "value": "terlama"
                             }
                         }
                     },
@@ -1060,8 +1060,8 @@
                         },
                         "examples": {
                             "string": {
-                                "summary": "car order_by (asc|desc)",
-                                "value": "asc"
+                                "summary": "car order_by (terlama|terbaru)",
+                                "value": "terlama"
                             }
                         }
                     },
@@ -1890,6 +1890,20 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "voucher_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Successful checkout order",
@@ -2029,6 +2043,46 @@
                                         "status": {
                                             "type": "integer",
                                             "example": "201"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reviews/for-seller": {
+            "get": {
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get all reviews",
+                "description": "Get all reviews",
+                "operationId": "index_reviews_based_on_seller",
+                "responses": {
+                    "200": {
+                        "description": "Successful get data reviews",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
                                         },
                                         "message": {
                                             "type": "string",
@@ -3017,6 +3071,63 @@
                 "responses": {
                     "200": {
                         "description": "Successful delete data voucher",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/vouchers/verify": {
+            "post": {
+                "tags": [
+                    "vouchers"
+                ],
+                "summary": "Verify voucher code",
+                "description": "Verify voucher code",
+                "operationId": "verify_vouchers",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "voucher_code": {
+                                        "type": "string"
+                                    },
+                                    "order_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful verify voucher code",
                         "content": {
                             "application/json": {
                                 "schema": {

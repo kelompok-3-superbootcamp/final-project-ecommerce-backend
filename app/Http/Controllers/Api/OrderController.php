@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enum\DiscountType;
 use App\Enum\PaymentStatus;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -410,6 +412,12 @@ class OrderController extends Controller
    *         @OA\Schema(type="integer"),
    *         @OA\Examples(example="int", value="1", summary="Parameter id."),
    *     ),
+   *     @OA\RequestBody(
+   *         @OA\JsonContent(
+   *             type="object",
+   *             @OA\Property(property="voucher_id", type="string"),
+   *         )
+   *     ),
    *     @OA\Response(
    *         response="200",
    *         description="Successful checkout order",
@@ -432,7 +440,7 @@ class OrderController extends Controller
    *     )
    * )
    */
-  public function checkout(Order $order)
+  public function checkout(Order $order, Request $request)
   {
     if ($order->payment_method == 'midtrans') {
       // Call Midtrans API
@@ -442,10 +450,39 @@ class OrderController extends Controller
       \Midtrans\Config::$is3ds = config('services.midtrans.is3ds');
 
       try {
+        if ($request->voucher_id) {
+          $voucher = DB::table('vouchers')
+            ->where('id', $request->voucher_id)
+            ->first();
+
+          if (is_null($voucher)) {
+            return ApiHelper::sendResponse(message: 'Voucher not found');
+          }
+
+          $isExpired = Carbon::parse($voucher->expired_at)->isPast();
+          $isRanOut = $voucher->quota === 0;
+
+          if ($isExpired) return ApiHelper::sendResponse(message: 'Voucher expired');
+          if ($isRanOut) return ApiHelper::sendResponse(message: 'Ran out of vouchers');
+
+          switch ($voucher->discount_type) {
+            case 'percentage':
+              $order->total_price = $order->total_price - ($order->total_price * $voucher->discount_value / 100);
+              break;
+            case 'nominal':
+              $order->total_price = $order->total_price - $voucher->discount_value;
+              break;
+            default:
+              break;
+          }
+
+          DB::table('vouchers')->where('id', $voucher->id)->decrement('quota');
+        }
+
         // Create Midtrans Params
         $midtransParams = [
           'transaction_details' => [
-            'order_id' => $order->id,
+            'order_id' => Str::random(5) . "-" . $order->id,
             'gross_amount' => (int) $order->total_price,
           ],
           'customer_details' => [

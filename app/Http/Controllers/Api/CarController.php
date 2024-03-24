@@ -117,7 +117,7 @@ class CarController extends Controller
    *         in="query",
    *         name="order_by",
    *         @OA\Schema(type="string"),
-   *         @OA\Examples(example="string", value="asc", summary="car order_by (asc|desc)"),
+   *         @OA\Examples(example="string", value="terlama", summary="car order_by (terlama|terbaru)"),
    *     ),
    *     @OA\Parameter(
    *         description="price_range of car",
@@ -233,6 +233,12 @@ class CarController extends Controller
       return $query->orderBy('c.price', $range);
     });
 
+    $cars->when($order, function (Builder $query) use ($order) {
+      $orderBy = $order === 'terlama' ? 'asc' : ($order === 'terbaru' ? 'desc' : 'asc');
+
+      return $query->orderBy('c.created_at', $orderBy);
+    });
+
     return ApiHelper::sendResponse(data: $cars->select(
       'c.id',
       'c.name',
@@ -252,7 +258,7 @@ class CarController extends Controller
       'c.created_at',
       'c.updated_at',
       DB::raw('IF(w.car_id IS NOT NULL, 1, 0) as isWishList')
-    )->orderBy('c.created_at', $order ?? 'asc')->paginate(10));
+    )->paginate(10));
   }
 
   /**
@@ -353,7 +359,7 @@ class CarController extends Controller
    *         in="query",
    *         name="order_by",
    *         @OA\Schema(type="string"),
-   *         @OA\Examples(example="string", value="asc", summary="car order_by (asc|desc)"),
+   *         @OA\Examples(example="string", value="terlama", summary="car order_by (terlama|terbaru)"),
    *     ),
    *     @OA\Parameter(
    *         description="price_range of car",
@@ -461,6 +467,12 @@ class CarController extends Controller
       return $query->orderBy('c.price', $range);
     });
 
+    $cars->when($order, function (Builder $query) use ($order) {
+      $orderBy = $order === 'terlama' ? 'asc' : ($order === 'terbaru' ? 'desc' : 'asc');
+
+      return $query->orderBy('c.created_at', $orderBy);
+    });
+
     return ApiHelper::sendResponse(data: $cars->where('c.user_id', auth()->user()->id)->select(
       'c.id',
       'c.name',
@@ -478,7 +490,7 @@ class CarController extends Controller
       'b.name as brand_name',
       'c.created_at',
       'c.updated_at',
-    )->orderBy('c.created_at', $order ?? 'asc')->get());
+    )->get());
   }
 
   /**
