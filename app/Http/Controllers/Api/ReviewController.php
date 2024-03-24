@@ -54,6 +54,44 @@ class ReviewController extends Controller
   }
 
   /**
+   * Get all reviews
+   *
+   * @OA\Get(
+   *     path="/api/reviews/for-seller",
+   *     tags={"reviews"},
+   *     description="Get all reviews",
+   *     security={{ "bearerAuth": {} }},
+   *     operationId="index_reviews_based_on_seller",
+   *     @OA\Response(
+   *         response="200",
+   *         description="Successful get data reviews",
+   *         @OA\JsonContent(
+   *             @OA\Property(
+   *                 property="status",
+   *                 type="integer",
+   *                 example="200",
+   *             ),
+   *             @OA\Property(
+   *                 property="message",
+   *                 type="string",
+   *                 example="ok",
+   *             ),
+   *             @OA\Property(
+   *                 property="data",
+   *                 type="object",
+   *             ),
+   *         )
+   *     )
+   * )
+   */
+  public function forSeller()
+  {
+    $user_id = auth()->user()->id;
+    $reviews = Review::where('user_id', $user_id)->get();
+    return ApiHelper::sendResponse(data: $reviews);
+  }
+
+  /**
    * Get avarage star count
    *
    * @OA\Get(

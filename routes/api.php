@@ -99,6 +99,7 @@ Route::controller(ReviewController::class)->prefix('reviews')->group(function ()
 
   Route::get('/avarage/{car_id}', 'avarageRatingCar');
   Route::get('/car/{car_id}', 'carReviews');
+  Route::get('/for-seller', 'forSeller');
 });
 
 Route::post('/midtrans/callback', [MidtransCallbackController::class, 'callback']);
