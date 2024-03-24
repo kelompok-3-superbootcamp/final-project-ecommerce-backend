@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Review;
+use App\Models\Car;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -86,8 +87,9 @@ class ReviewController extends Controller
    */
   public function forSeller()
   {
-    $user_id = auth()->user()->id;
-    $reviews = Review::where('user_id', $user_id)->get();
+    $user = auth()->user();
+    $cars = Car::where('user_id', $user->id)->pluck('id');
+    $reviews = Review::whereIn('car_id', $cars)->get();
     return ApiHelper::sendResponse(data: $reviews);
   }
 
