@@ -75,7 +75,7 @@ class OrderController extends Controller
    *         name="status",
    *         required=true,
    *         @OA\Schema(type="string"),
-   *         @OA\Examples(example="pending", value="pending", summary="Parameter payment status (complete|pending|error|closed)"),
+   *         @OA\Examples(example="pending", value="pending", summary="Parameter payment status (success|pending|error|closed)"),
    *     ),
    *     @OA\Response(
    *         response="200",
@@ -104,6 +104,7 @@ class OrderController extends Controller
     $orderedCars = DB::table('orders as o')
       ->join('cars as c', 'c.id', 'o.car_id')
       ->join('users as u', 'u.id', 'o.user_id')
+      ->leftJoin('reviews as r', 'r.car_id', 'c.id')
       ->where('o.payment_status', $status)
       ->where('u.id', auth()->user()->id)
       ->select(
@@ -117,6 +118,7 @@ class OrderController extends Controller
         'c.image',
         'c.created_at',
         'c.updated_at',
+        DB::raw('IF(r.id IS NOT NULL, 1, 0) as isReviewed')
       )->get();
 
     return ApiHelper::sendResponse(data: $orderedCars);

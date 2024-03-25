@@ -1599,7 +1599,7 @@
                         },
                         "examples": {
                             "pending": {
-                                "summary": "Parameter payment status (complete|pending|error|closed)",
+                                "summary": "Parameter payment status (success|pending|error|closed)",
                                 "value": "pending"
                             }
                         }
@@ -3305,7 +3305,7 @@
                         },
                         "examples": {
                             "int": {
-                                "summary": "Parameter id.",
+                                "summary": "Car id.",
                                 "value": "1"
                             }
                         }
