@@ -87,7 +87,7 @@ Route::controller(WishlistController::class)->prefix('wishlists')->group(functio
   Route::get('/{wishlist}', 'show');
   Route::post('/', 'store');
   Route::put('/{wishlist}', 'update');
-  Route::delete('/{wishlist}', 'destroy');
+  Route::delete('/{car_id}', 'destroy');
 });
 
 Route::controller(ReviewController::class)->prefix('reviews')->group(function () {

@@ -157,8 +157,7 @@ class OrderController extends Controller
   {
     $orders = DB::table('orders as o')
       ->join('cars as c', 'c.id', 'o.car_id')
-      ->join('users as u', 'u.id', 'o.user_id')
-      ->where('u.id', auth()->user()->id)
+      ->where('c.user_id', auth()->user()->id)
       ->select(
         'c.id',
         'o.payment_status',

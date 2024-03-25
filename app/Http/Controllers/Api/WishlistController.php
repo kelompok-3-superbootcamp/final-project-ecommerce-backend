@@ -60,6 +60,9 @@ class WishlistController extends Controller
         'c.price',
         'c.transmission',
         'c.condition',
+        'c.year',
+        'c.km',
+        'c.stock',
         'c.image',
         'c.created_at',
         'c.updated_at',
@@ -156,7 +159,7 @@ class WishlistController extends Controller
    *         name="id",
    *         required=true,
    *         @OA\Schema(type="integer"),
-   *         @OA\Examples(example="int", value="1", summary="Parameter id."),
+   *         @OA\Examples(example="int", value="1", summary="Car id."),
    *     ),
    *     @OA\Response(
    *         response="200",
@@ -180,10 +183,13 @@ class WishlistController extends Controller
    *     )
    * )
    */
-  public function destroy(Wishlist $wishlist)
+  public function destroy($car_id)
   {
     try {
-      $wishlist->delete();
+      DB::table('wishlists')
+        ->where('car_id', $car_id)
+        ->where('user_id', auth()->user()->id)
+        ->delete();
 
       return ApiHelper::sendResponse(200);
     } catch (Exception $e) {
