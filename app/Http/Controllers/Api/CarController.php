@@ -152,6 +152,7 @@ class CarController extends Controller
   {
     // $cars = Car::query()->with(['brand', 'type', 'user']);
     $name = $request->query('name');
+    $color = $request->query('color');
     $transmission = $request->query('transmission');
     $location = $request->query('location');
     $condition = $request->query('condition');
@@ -175,6 +176,10 @@ class CarController extends Controller
 
     $cars->when($name, function (Builder $query) use ($name) {
       return $query->whereRaw("LOWER(c.name) LIKE '%" . strtolower($name) . "%'");
+    });
+
+    $cars->when($color, function (Builder $query) use ($color) {
+      return $query->whereRaw("LOWER(c.color) LIKE '%" . strtolower($color) . "%'");
     });
 
     $cars->when($transmission, function (Builder $query) use ($transmission) {
@@ -393,6 +398,7 @@ class CarController extends Controller
   public function basedOnSeller(Request $request)
   {
     $name = $request->query('name');
+    $color = $request->query('color');
     $transmission = $request->query('transmission');
     $location = $request->query('location');
     $condition = $request->query('condition');
@@ -413,6 +419,10 @@ class CarController extends Controller
 
     $cars->when($name, function (Builder $query) use ($name) {
       return $query->whereRaw("LOWER(c.name) LIKE '%" . strtolower($name) . "%'");
+    });
+
+    $cars->when($color, function (Builder $query) use ($color) {
+      return $query->whereRaw("LOWER(c.color) LIKE '%" . strtolower($color) . "%'");
     });
 
     $cars->when($transmission, function (Builder $query) use ($transmission) {
