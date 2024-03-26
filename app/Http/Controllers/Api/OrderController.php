@@ -104,13 +104,16 @@ class OrderController extends Controller
     $orderedCars = DB::table('orders as o')
       ->join('cars as c', 'c.id', 'o.car_id')
       ->join('users as u', 'u.id', 'o.user_id')
+      ->join('brands as b', 'c.brand_id', 'b.id')
       ->leftJoin('reviews as r', 'r.car_id', 'c.id')
       ->where('o.payment_status', $status)
       ->where('u.id', auth()->user()->id)
       ->select(
         'c.id',
         'o.payment_status',
+        'b.name as brand_name',
         'c.name',
+        'c.year',
         'c.description',
         'c.price',
         'c.transmission',
@@ -365,7 +368,7 @@ class OrderController extends Controller
     }
 
     try {
-      DB::transaction(function () use ($validator, $order) {
+      return DB::transaction(function () use ($validator, $order) {
         $data = $validator->validated();
         $data['user_id'] = auth()->user()->id;
 
@@ -384,11 +387,9 @@ class OrderController extends Controller
             $voucher->decrement('quota');
           }
 
-          $updatedOrder = $order->update($data);
+          $order->update($data);
           DB::table('cars')->where('id', $order->car_id)->decrement('stock');
         }
-
-        return ApiHelper::sendResponse(201, data: $updatedOrder);
       });
     } catch (Exception $e) {
       return ApiHelper::sendResponse(500, $e->getMessage());

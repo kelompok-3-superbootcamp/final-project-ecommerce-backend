@@ -17,7 +17,7 @@ class CarController extends Controller
 
   public function __construct()
   {
-    $this->middleware('auth')->except(['index', 'show', 'basedOnProfile']);
+    $this->middleware('auth')->except(['show', 'basedOnProfile']);
   }
 
   /**
@@ -244,6 +244,8 @@ class CarController extends Controller
       return $query->orderBy('c.created_at', $orderBy);
     });
 
+    $current_auth_user_id = auth()->user()->id;
+
     return ApiHelper::sendResponse(data: $cars->select(
       'c.id',
       'c.name',
@@ -262,7 +264,7 @@ class CarController extends Controller
       'u.name as user_name',
       'c.created_at',
       'c.updated_at',
-      DB::raw('IF(w.car_id IS NOT NULL, 1, 0) as isWishList')
+      DB::raw("IF(w.car_id IS NOT NULL AND w.user_id = $current_auth_user_id, 1, 0) as isWishList")
     )->paginate(10));
   }
 
