@@ -53,6 +53,7 @@ Route::controller(BrandController::class)->prefix('brands')->group(function () {
 
 Route::controller(CarController::class)->prefix('cars')->group(function () {
   Route::get('/', 'index');
+  Route::get('/home', 'home');
   Route::get('/based-on-seller', 'basedOnSeller');
   Route::get('/{car_id}', 'show');
   Route::post('/', 'store');

@@ -17,7 +17,7 @@ class CarController extends Controller
 
   public function __construct()
   {
-    $this->middleware('auth')->except(['index', 'show', 'basedOnProfile']);
+    $this->middleware('auth')->except(['home', 'show', 'basedOnProfile']);
   }
 
   /**
@@ -266,6 +266,40 @@ class CarController extends Controller
       'c.created_at',
       'c.updated_at',
       DB::raw($current_auth_user_id ? $rawQueryIsWishlists : "")
+    )->paginate(10));
+  }
+
+  public function home(Request $request)
+  {
+    $cars = DB::table('cars as c')
+      ->join('brands as b', 'b.id', 'c.brand_id')
+      ->join('types as t', 't.id', 'c.type_id')
+      ->join('users as u', 'u.id', 'c.user_id');
+
+    $condition = $request->query('condition');
+
+    $cars->when($condition, function (Builder $query) use ($condition) {
+      return $query->whereRaw("LOWER(c.condition) LIKE '%" . strtolower($condition) . "%'");
+    });
+
+    return ApiHelper::sendResponse(data: $cars->select(
+      'c.id',
+      'c.name',
+      'c.color',
+      'c.description',
+      'c.price',
+      'c.transmission',
+      'c.location',
+      'c.condition',
+      'c.year',
+      'c.km',
+      'c.stock',
+      'c.image',
+      't.name as type_name',
+      'b.name as brand_name',
+      'u.name as user_name',
+      'c.created_at',
+      'c.updated_at',
     )->paginate(10));
   }
 
