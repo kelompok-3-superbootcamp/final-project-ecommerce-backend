@@ -368,11 +368,9 @@ class OrderController extends Controller
     }
 
     try {
-      DB::transaction(function () use ($validator, $order) {
+      return DB::transaction(function () use ($validator, $order) {
         $data = $validator->validated();
         $data['user_id'] = auth()->user()->id;
-
-        $updatedOrder = 0;
 
         if ($data['payment_status'] === PaymentStatus::COMPLETE) {
           if ($data['voucher_id']) {
@@ -389,11 +387,9 @@ class OrderController extends Controller
             $voucher->decrement('quota');
           }
 
-          $updatedOrder = $order->update($data);
+          $order->update($data);
           DB::table('cars')->where('id', $order->car_id)->decrement('stock');
         }
-
-        return ApiHelper::sendResponse(201, data: $updatedOrder);
       });
     } catch (Exception $e) {
       return ApiHelper::sendResponse(500, $e->getMessage());
