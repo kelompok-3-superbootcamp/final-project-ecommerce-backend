@@ -51,7 +51,17 @@ class ReviewController extends Controller
    */
   public function index()
   {
-    return ApiHelper::sendResponse(data: Review::all());
+    $user = auth()->user();
+
+    $reviews = DB::table('reviews as r')
+      ->join('cars as c', 'c.id', 'r.car_id')
+      ->join('brands as b', 'b.id', 'c.brand_id')
+      ->join('users as u', 'u.id', 'r.user_id')
+      ->where('r.user_id', $user->id)
+      ->select('c.*', 'u.name as user_name', 'r.*', 'b.name as brand_name')
+      ->get();
+
+    return ApiHelper::sendResponse(data: $reviews);
   }
 
   /**
@@ -89,7 +99,15 @@ class ReviewController extends Controller
   {
     $user = auth()->user();
     $cars = Car::where('user_id', $user->id)->pluck('id');
-    $reviews = Review::whereIn('car_id', $cars)->get();
+
+    $reviews = DB::table('reviews as r')
+      ->join('cars as c', 'c.id', 'r.car_id')
+      ->join('brands as b', 'b.id', 'c.brand_id')
+      ->join('users as u', 'u.id', 'r.user_id')
+      ->whereIn('c.id', $cars)
+      ->select('c.*', 'u.name as user_name', 'r.*', 'b.name as brand_name')
+      ->get();
+
     return ApiHelper::sendResponse(data: $reviews);
   }
 
