@@ -108,6 +108,7 @@ class OrderController extends Controller
       ->leftJoin('reviews as r', 'r.car_id', 'c.id')
       ->where('o.payment_status', $status)
       ->where('u.id', auth()->user()->id)
+      ->orderBy('c.created_at', 'desc')
       ->select(
         'c.id',
         'o.payment_status',
