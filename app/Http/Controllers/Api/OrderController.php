@@ -372,6 +372,8 @@ class OrderController extends Controller
         $data = $validator->validated();
         $data['user_id'] = auth()->user()->id;
 
+        $updatedOrder = 0;
+
         if ($data['payment_status'] === PaymentStatus::COMPLETE) {
           if ($data['voucher_id']) {
             $voucher = DB::table('vouchers')
