@@ -133,7 +133,8 @@ class BrandController extends Controller
   {
     $validator = Validator::make($request->only(['name', 'logo_url']), [
       'name' => 'required|string|max:255',
-      'logo_url' => 'required|url:https'
+      // 'logo_url' => 'required|url:https'
+      'logo_url' => 'required|string'
     ]);
 
     if ($validator->fails()) {
@@ -191,7 +192,8 @@ class BrandController extends Controller
   {
     $validator = Validator::make($request->only(['name', 'logo_url']), [
       'name' => 'sometimes|required|string|max:255',
-      'logo_url' => 'sometimes|required|url:https'
+      // 'logo_url' => 'sometimes|required|url:https'
+      'logo_url' => 'sometimes|required|string'
     ]);
 
     if ($validator->fails()) {
