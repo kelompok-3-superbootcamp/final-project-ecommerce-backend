@@ -57,7 +57,22 @@ class OrderController extends Controller
    */
   public function index()
   {
-    return ApiHelper::sendResponse(data: Order::all());
+    $orders = DB::table('orders as o')
+      ->join('cars as c', 'c.id', 'o.car_id')
+      ->join('users as u', 'u.id', 'o.user_id')
+      ->select(
+        'o.id',
+        'c.id as car_id',
+        'c.name as car_name',
+        'u.name as user_name',
+        'o.date',
+        'o.payment_method',
+        'o.payment_status',
+        'o.payment_url',
+        'o.total_price',
+      )->get();
+
+    return ApiHelper::sendResponse($orders);
   }
 
   /**
