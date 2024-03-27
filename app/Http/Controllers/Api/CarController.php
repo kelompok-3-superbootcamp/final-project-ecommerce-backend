@@ -269,6 +269,43 @@ class CarController extends Controller
     )->paginate(10));
   }
 
+   /**
+   * Get cars for homepage
+   *
+   * @OA\Get(
+   *     path="/api/cars/home",
+   *     tags={"cars"},
+   *     description="Get cars for homepage",
+   *     operationId="getCarHomepage",
+   *     @OA\Parameter(
+   *         description="Condition of car",
+   *         in="query",
+   *         name="condition",
+   *         @OA\Schema(type="string"),
+   *         @OA\Examples(example="baru", value="baru", summary="car condition (baru, bekas)"),
+   *     ),
+   *     @OA\Response(
+   *         response="200",
+   *         description="Successful get data cars",
+   *         @OA\JsonContent(
+   *             @OA\Property(
+   *                 property="status",
+   *                 type="integer",
+   *                 example="200",
+   *             ),
+   *             @OA\Property(
+   *                 property="message",
+   *                 type="string",
+   *                 example="ok",
+   *             ),
+   *             @OA\Property(
+   *                 property="data",
+   *                 type="object",
+   *             ),
+   *         )
+   *     )
+   * )
+   */
   public function home(Request $request)
   {
     $cars = DB::table('cars as c')
@@ -642,6 +679,7 @@ class CarController extends Controller
     $car = DB::table('cars as c')
       ->join('brands as b', 'b.id', 'c.brand_id')
       ->join('types as t', 't.id', 'c.type_id')
+      ->join('users as u', 'u.id', 'c.user_id')
       ->where('c.id', $car_id)
       ->select(
         'c.id',
@@ -658,6 +696,8 @@ class CarController extends Controller
         'c.image',
         't.name as type_name',
         'b.name as brand_name',
+        'u.phone_number',
+        'u.email',
         'c.created_at',
         'c.updated_at',
       )->first();
