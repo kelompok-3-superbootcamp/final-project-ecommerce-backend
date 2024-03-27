@@ -282,6 +282,10 @@ class OrderController extends Controller
       $data = $validator->validated();
       $car = Car::findOrFail($data['car_id']);
 
+      if ($car->user_id === auth()->user()->id) {
+        return ApiHelper::sendResponse(401, "Can't buy your own cars");
+      }
+
       if ($car->stock <= 0) {
         return ApiHelper::sendResponse(404, data: "Out of stock");
       }
