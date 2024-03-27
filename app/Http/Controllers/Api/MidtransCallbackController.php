@@ -29,8 +29,10 @@ class MidtransCallbackController extends Controller
     $fraud = $notification->fraud_status;
     $orderId = $notification->order_id;
 
+    $realOrderId = explode('-', $orderId);
+
     // Cari transaksi berdasarkan ID
-    $order = Order::findOrFail(explode($orderId, '-')[1]);
+    $order = Order::findOrFail($realOrderId[0]);
 
     // Handle notification status midtrans
     if ($status == 'capture') {
@@ -52,6 +54,7 @@ class MidtransCallbackController extends Controller
     } elseif ($status == 'cancel') {
       $order->payment_status = 'cancelled';
     }
+
 
     try {
       DB::transaction(function () use ($order, $status) {

@@ -505,7 +505,7 @@ class OrderController extends Controller
         // Create Midtrans Params
         $midtransParams = [
           'transaction_details' => [
-            'order_id' => Str::random(5) . "-" . $order->id,
+            'order_id' => $order->id.'-'.Str::random(5),
             'gross_amount' => (int) $order->total_price,
           ],
           'customer_details' => [
@@ -522,7 +522,7 @@ class OrderController extends Controller
         $order->payment_url = $paymentUrl;
         $order->save();
 
-        return ApiHelper::sendResponse(201, data: $paymentUrl);
+        return ApiHelper::sendResponse(201, data: $order);
       } catch (Exception $e) {
         return ApiHelper::sendResponse(500, $e->getMessage());
       }
