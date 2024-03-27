@@ -15,7 +15,7 @@ return new class extends Migration
       $table->id();
       $table->string('name');
       $table->string('color');
-      $table->tinyText('description');
+      $table->text('description');
       $table->bigInteger('price')->unsigned();
       $table->string('transmission');
       $table->string('location');
