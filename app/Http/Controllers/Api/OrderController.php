@@ -111,6 +111,7 @@ class OrderController extends Controller
       ->orderBy('c.created_at', 'desc')
       ->select(
         'c.id',
+        'o.id as order_id',
         'o.payment_status',
         'b.name as brand_name',
         'c.name',
