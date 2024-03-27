@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helper\ApiHelper;
 use Midtrans\Config;
 use Midtrans\Notification;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class MidtransCallbackController extends Controller
@@ -51,20 +53,24 @@ class MidtransCallbackController extends Controller
       $order->payment_status = 'cancelled';
     }
 
-    DB::transaction(function () use ($order, $status) {
-      if ($status === 'settlement') {
-        DB::table('cars')->where('id', $order->car_id)->decrement('stock');
-      }
+    try {
+      DB::transaction(function () use ($order, $status) {
+        if ($status === 'settlement') {
+          DB::table('cars')->where('id', $order->car_id)->decrement('stock');
+        }
 
-      $order->save();
-    });
+        $order->save();
+      });
 
-    //return response
-    return response()->json([
-      'meta' => [
-        'code' => 200,
-        'message' => 'Midtrans Notification Success'
-      ]
-    ]);
+      //return response
+      return response()->json([
+        'meta' => [
+          'code' => 200,
+          'message' => 'Midtrans Notification Success'
+        ]
+      ]);
+    } catch (Exception $e) {
+      return ApiHelper::sendResponse(500, $e->getMessage());
+    }
   }
 }
