@@ -54,7 +54,7 @@ class BrandController extends Controller
    * Show cars from specific brand.
    *
    * @OA\Get(
-   *     path="/api/brands/{id}",
+   *     path="/api/brands/{id}/cars",
    *     tags={"brand"},
    *     operationId="getCarsByBrand",
    *     security={{ "bearerAuth":{} }},
@@ -78,7 +78,7 @@ class BrandController extends Controller
    *     ),
    * )
    */
-  public function show(Brand $brand)
+  public function carsFromBrand(Brand $brand)
   {
     $cars = DB::table('brands as b')
       ->join('cars as c', 'c.brand_id', 'b.id')
@@ -99,6 +99,39 @@ class BrandController extends Controller
       )->get();
 
     return ApiHelper::sendResponse(data: $cars);
+  }
+
+  /**
+   * Show brand.
+   *
+   * @OA\Get(
+   *     path="/api/brands/{id}",
+   *     tags={"brand"},
+   *     operationId="getBrand",
+   *     security={{ "bearerAuth":{} }},
+   *     @OA\Parameter(
+   *         name="id",
+   *         in="path",
+   *         description="ID of Brand",
+   *         required=true,
+   *         @OA\Schema(type="integer"),
+   *         example=1,
+   *     ),
+   *     @OA\Response(
+   *         response=404,
+   *         description="Not found",
+   *         @OA\JsonContent
+   *     ),
+   *     @OA\Response(
+   *         response=200,
+   *         description="Cars data",
+   *         @OA\JsonContent
+   *     ),
+   * )
+   */
+  public function show(Brand $brand)
+  {
+    return ApiHelper::sendResponse(data: $brand);
   }
 
   /**

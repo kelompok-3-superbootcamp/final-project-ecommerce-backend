@@ -46,6 +46,7 @@ Route::controller(TypeController::class)->prefix('types')->group(function () {
 Route::controller(BrandController::class)->prefix('brands')->group(function () {
   Route::get('/', 'index');
   Route::get('/{brand}', 'show');
+  Route::get('/{brand}/cars', 'carsFromBrand');
   Route::post('/', 'store');
   Route::put('/{brand}', 'update');
   Route::delete('/{brand}', 'destroy');
