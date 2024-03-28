@@ -28,6 +28,7 @@ class CarController extends Controller
    *     tags={"cars"},
    *     description="Get all cars",
    *     operationId="getCars",
+   *     security={{ "bearerAuth": {} }},
    *     @OA\Parameter(
    *         description="Name of car",
    *         in="query",
@@ -269,7 +270,7 @@ class CarController extends Controller
     )->paginate(10));
   }
 
-   /**
+  /**
    * Get cars for homepage
    *
    * @OA\Get(
