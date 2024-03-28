@@ -252,7 +252,7 @@ class VoucherController extends Controller
       'discount_value' => ['required', 'numeric', new DiscountValueValidation],
       'discount_type' => ['required', new Enum(DiscountType::class)],
       'quota' => 'required|numeric',
-      'expired_at' => 'required|date_format:Y-m-d H:i:s'
+      'expired_at' => 'required|date_format:Y-m-d H:i:s|after_or_equal:today'
     ]);
 
     if ($validator->fails()) {
