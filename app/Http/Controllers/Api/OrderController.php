@@ -128,6 +128,7 @@ class OrderController extends Controller
         'c.id',
         'o.id as order_id',
         'o.payment_status',
+        'o.payment_url',
         'b.name as brand_name',
         'c.name',
         'c.year',
@@ -505,7 +506,7 @@ class OrderController extends Controller
         // Create Midtrans Params
         $midtransParams = [
           'transaction_details' => [
-            'order_id' => $order->id.'-'.Str::random(5),
+            'order_id' => $order->id . '-' . Str::random(5),
             'gross_amount' => (int) $order->total_price,
           ],
           'customer_details' => [
