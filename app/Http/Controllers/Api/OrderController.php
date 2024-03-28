@@ -72,7 +72,7 @@ class OrderController extends Controller
         'o.total_price',
       )->get();
 
-    return ApiHelper::sendResponse($orders);
+    return ApiHelper::sendResponse(data: $orders);
   }
 
   /**
